@@ -10,6 +10,13 @@ import Foundation
 import LoopKit
 import HealthKit
 
+public var logMessages = [String]()
+
+public func addLogMessage(_ text: String) {
+    let date = Date().formatted(date: .omitted, time: .standard)
+    logMessages.append("\(date): \(text)")
+}
+
 
 extension UserDefaults {
 
@@ -25,7 +32,10 @@ extension UserDefaults {
         case lastProfileExpirationAlertDate = "com.loopkit.Loop.lastProfileExpirationAlertDate"
     }
 
-    public static let appGroup = UserDefaults(suiteName: Bundle.main.appGroupSuiteName)
+    public static let appGroup: UserDefaults? = {
+        addLogMessage("getting UserDefaults.appGroup")
+        return UserDefaults(suiteName: Bundle.main.appGroupSuiteName)
+    }()
 
     public var basalRateSchedule: BasalRateSchedule? {
         get {

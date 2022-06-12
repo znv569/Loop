@@ -209,8 +209,10 @@ final class DeviceDataManager {
                 case .success(let entries):
                     deviceLogReport = entries.map { "* \($0.timestamp) \($0.managerIdentifier) \($0.deviceIdentifier ?? "") \($0.type) \($0.message)" }.joined(separator: "\n")
                 }
-                
-                let report = [
+
+                var report = logMessages
+
+                report.append(contentsOf: [
                     "## LoopVersion",
                     "* Version: \(Bundle.main.localizedNameAndVersion)",
                     "* profileExpiration: \(Bundle.main.profileExpirationString)",
@@ -240,9 +242,9 @@ final class DeviceDataManager {
                     String(reflecting: self.statusExtensionManager!),
                     "",
                     loopReport,
-                ].joined(separator: "\n")
-                
-                completion(report)
+                ])
+
+                completion(report.joined(separator: "\n"))
             }
         }
     }

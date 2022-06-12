@@ -10,9 +10,14 @@ import UIKit
 import Intents
 import LoopKit
 import UserNotifications
+import LoopCore
 
-@UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    override init() {
+        super.init()
+        addLogMessage("AppDelegate.init")
+    }
 
     private lazy var log = DiagnosticLogger.shared.forCategory("AppDelegate")
 
@@ -23,7 +28,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private var rootViewController: RootNavigationController! {
         return window?.rootViewController as? RootNavigationController
     }
-    
+
     private var isAfterFirstUnlock: Bool {
         let fileManager = FileManager.default
         do {
@@ -44,6 +49,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func finishLaunch() {
+        addLogMessage("finishLaunch")
         log.default("Finishing launching")
         
         deviceManager = DeviceDataManager()
@@ -59,7 +65,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+
+        addLogMessage("didFinishLaunchingWithOptions")
+
         log.default("didFinishLaunchingWithOptions \(String(describing: launchOptions))")
         
         AnalyticsManager.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -93,6 +101,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        addLogMessage("applicationDidBecomeActive")
+
         ProfileExpirationAlerter.alertIfNeeded(viewControllerToPresentFrom: rootViewController)
         deviceManager?.updatePumpManagerBLEHeartbeatPreference()
     }
