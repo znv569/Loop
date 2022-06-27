@@ -12,6 +12,7 @@ import UserNotifications
 import UIKit
 import HealthKit
 import Combine
+import LoopCore
 
 protocol DeviceStatusProvider {
     var pumpManagerStatus: PumpManagerStatus? { get }
@@ -51,12 +52,31 @@ class SettingsManager {
             .store(in: &cancellables)
     }
 
+    var loopSettings: LoopSettings? {
+        guard let storedSettings = latestSettings else {
+            return nil
+        }
+
+        return LoopSettings(
+            dosingEnabled: storedSettings.dosingEnabled,
+            glucoseTargetRangeSchedule: storedSettings.glucoseTargetRangeSchedule,
+            preMealTargetRange: storedSettings.preMealTargetRange,
+            legacyWorkoutTargetRange: storedSettings.workoutTargetRange,
+            overridePresets: storedSettings.overridePresets,
+            scheduleOverride: storedSettings.scheduleOverride,
+            preMealOverride: storedSettings.preMealOverride,
+            maximumBasalRatePerHour: storedSettings.maximumBasalRatePerHour,
+            maximumBolus: storedSettings.maximumBolus,
+            suspendThreshold: storedSettings.suspendThreshold,
+            dosingStrategy: storedSettings.dosingStrategy)
+    }
+
     func storeSettings(notificationSettings: NotificationSettings? = nil,
                        controllerDevice: StoredSettings.ControllerDevice? = nil,
                        cgmDevice: HKDevice? = nil,
                        pumpDevice: HKDevice? = nil)
     {
-        guard let appGroup = UserDefaults.appGroup, let loopSettings = appGroup.loopSettings, let deviceToken = deviceToken else {
+        guard let appGroup = UserDefaults.appGroup, let loopSettings = appGroup.legacyLoopSettings, let deviceToken = deviceToken else {
             return
         }
 

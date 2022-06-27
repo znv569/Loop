@@ -85,7 +85,7 @@ extension UserDefaults {
         }
     }
 
-    public var loopSettings: LoopSettings? {
+    public var legacyLoopSettings: LoopSettings? {
         get {
             if let rawValue = dictionary(forKey: Key.loopSettings.rawValue) {
                 return LoopSettings(rawValue: rawValue)
@@ -131,7 +131,7 @@ extension UserDefaults {
                     maximumBolus: maximumBolus,
                     suspendThreshold: suspendThreshold
                 )
-                self.loopSettings = settings
+                self.legacyLoopSettings = settings
 
                 return settings
             }

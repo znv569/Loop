@@ -8,11 +8,6 @@
 import HealthKit
 import LoopKit
 
-public enum DosingStrategy: Int, CaseIterable {
-    case tempBasalOnly
-    case automaticBolus
-}
-
 public extension DosingStrategy {
     var title: String {
         switch self {
@@ -31,8 +26,6 @@ public struct LoopSettings: Equatable {
     }
     
     public var dosingEnabled = false
-
-    public let dynamicCarbAbsorptionEnabled = true
 
     public var glucoseTargetRangeSchedule: GlucoseRangeSchedule?
 
@@ -79,45 +72,31 @@ public struct LoopSettings: Equatable {
     public var glucoseUnit: HKUnit? {
         return glucoseTargetRangeSchedule?.unit
     }
-    
-    
-    // MARK - Guardrails
-
-    public func allowedSensitivityValues(for unit: HKUnit) -> [Double] {
-        switch unit {
-        case HKUnit.milligramsPerDeciliter:
-            return (10...500).map { Double($0) }
-        case HKUnit.millimolesPerLiter:
-            return (6...270).map { Double($0) / 10.0 }
-        default:
-            return []
-        }
-    }
-
-    public func allowedCorrectionRangeValues(for unit: HKUnit) -> [Double] {
-        switch unit {
-        case HKUnit.milligramsPerDeciliter:
-            return (60...180).map { Double($0) }
-        case HKUnit.millimolesPerLiter:
-            return (33...100).map { Double($0) / 10.0 }
-        default:
-            return []
-        }
-    }
-
 
     public init(
         dosingEnabled: Bool = false,
         glucoseTargetRangeSchedule: GlucoseRangeSchedule? = nil,
+        preMealTargetRange: ClosedRange<HKQuantity>? = nil,
+        legacyWorkoutTargetRange: ClosedRange<HKQuantity>? = nil,
+        overridePresets: [TemporaryScheduleOverridePreset]? = nil,
+        scheduleOverride: TemporaryScheduleOverride? = nil,
+        preMealOverride: TemporaryScheduleOverride? = nil,
         maximumBasalRatePerHour: Double? = nil,
         maximumBolus: Double? = nil,
-        suspendThreshold: GlucoseThreshold? = nil
+        suspendThreshold: GlucoseThreshold? = nil,
+        dosingStrategy: DosingStrategy = .tempBasalOnly
     ) {
         self.dosingEnabled = dosingEnabled
         self.glucoseTargetRangeSchedule = glucoseTargetRangeSchedule
+        self.preMealTargetRange = preMealTargetRange
+        self.legacyWorkoutTargetRange = legacyWorkoutTargetRange
+        self.overridePresets = overridePresets ?? []
+        self.scheduleOverride = scheduleOverride
+        self.preMealOverride = preMealOverride
         self.maximumBasalRatePerHour = maximumBasalRatePerHour
         self.maximumBolus = maximumBolus
         self.suspendThreshold = suspendThreshold
+        self.dosingStrategy = dosingStrategy
     }
 }
 

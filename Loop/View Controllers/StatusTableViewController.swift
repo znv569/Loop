@@ -401,7 +401,7 @@ final class StatusTableViewController: LoopChartsTableViewController {
 
             if currentContext.contains(.carbs) {
                 reloadGroup.enter()
-                self.deviceManager.carbStore.getCarbsOnBoardValues(start: startDate, end: nil, effectVelocities: manager.settings.dynamicCarbAbsorptionEnabled ? state.insulinCounteractionEffects : nil) { (result) in
+                self.deviceManager.carbStore.getCarbsOnBoardValues(start: startDate, end: nil, effectVelocities: FeatureFlags.dynamicCarbAbsorptionEnabled ? state.insulinCounteractionEffects : nil) { (result) in
                     switch result {
                     case .failure(let error):
                         self.log.error("CarbStore failed to get carbs on board values: %{public}@", String(describing: error))

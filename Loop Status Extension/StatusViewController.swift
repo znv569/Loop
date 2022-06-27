@@ -313,7 +313,7 @@ class StatusViewController: UIViewController, NCWidgetProviding {
                 self.charts.predictedGlucose.setPredictedGlucoseValues([])
             }
 
-            self.charts.predictedGlucose.targetGlucoseSchedule = defaults.loopSettings?.glucoseTargetRangeSchedule
+            self.charts.predictedGlucose.targetGlucoseSchedule = defaults.legacyLoopSettings?.glucoseTargetRangeSchedule
             self.charts.invalidateChart(atIndex: 0)
             self.charts.prerender()
             self.glucoseChartContentView.reloadChart()

@@ -25,7 +25,7 @@ class LoopDataManager {
     // Main queue only
     var settings = LoopSettings() {
         didSet {
-            UserDefaults.standard.loopSettings = settings
+            UserDefaults.standard.legacyLoopSettings = settings
             needsDidUpdateContextNotification = true
             sendDidUpdateContextNotificationIfNecessary()
         }
@@ -57,7 +57,7 @@ class LoopDataManager {
     /// Main queue only
     private var lastGlucoseBackfill = Date.distantPast
 
-    init(settings: LoopSettings = UserDefaults.standard.loopSettings ?? LoopSettings()) {
+    init(settings: LoopSettings = UserDefaults.standard.legacyLoopSettings ?? LoopSettings()) {
         self.settings = settings
 
         let healthStore = HKHealthStore()

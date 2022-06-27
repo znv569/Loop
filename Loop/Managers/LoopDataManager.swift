@@ -64,7 +64,7 @@ final class LoopDataManager: LoopSettingsAlerterDelegate {
         basalRateSchedule: BasalRateSchedule? = UserDefaults.appGroup?.basalRateSchedule,
         carbRatioSchedule: CarbRatioSchedule? = UserDefaults.appGroup?.carbRatioSchedule,
         insulinSensitivitySchedule: InsulinSensitivitySchedule? = UserDefaults.appGroup?.insulinSensitivitySchedule,
-        settings: LoopSettings = UserDefaults.appGroup?.loopSettings ?? LoopSettings(),
+        settings: LoopSettings = UserDefaults.appGroup?.legacyLoopSettings ?? LoopSettings(),
         overrideHistory: TemporaryScheduleOverrideHistory,
         analyticsServicesManager: AnalyticsServicesManager,
         localCacheDuration: TimeInterval = .days(1),
@@ -225,7 +225,7 @@ final class LoopDataManager: LoopSettingsAlerterDelegate {
             self.insulinEffect = nil
         }
 
-        UserDefaults.appGroup?.loopSettings = newValue
+        UserDefaults.appGroup?.legacyLoopSettings = newValue
         notify(forChange: .preferences)
         analyticsServicesManager.didChangeLoopSettings(from: oldValue, to: newValue)
     }
@@ -982,7 +982,7 @@ extension LoopDataManager {
             updateGroup.enter()
             carbStore.getGlucoseEffects(
                 start: retrospectiveStart, end: nil,
-                effectVelocities: settings.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
+                effectVelocities: FeatureFlags.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
             ) { (result) -> Void in
                 switch result {
                 case .failure(let error):
@@ -1001,7 +1001,7 @@ extension LoopDataManager {
 
         if carbsOnBoard == nil {
             updateGroup.enter()
-            carbStore.carbsOnBoard(at: now(), effectVelocities: settings.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil) { (result) in
+            carbStore.carbsOnBoard(at: now(), effectVelocities: FeatureFlags.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil) { (result) in
                 switch result {
                 case .failure(let error):
                     switch error {
@@ -1165,7 +1165,7 @@ extension LoopDataManager {
                         of: [potentialCarbEntry],
                         startingAt: retrospectiveStart,
                         endingAt: nil,
-                        effectVelocities: settings.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
+                        effectVelocities: FeatureFlags.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
                     )
 
                     effects.append(potentialCarbEffect)
@@ -1184,7 +1184,7 @@ extension LoopDataManager {
                         of: entries,
                         startingAt: retrospectiveStart,
                         endingAt: nil,
-                        effectVelocities: settings.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
+                        effectVelocities: FeatureFlags.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
                     )
 
                     effects.append(potentialCarbEffect)
@@ -1312,7 +1312,7 @@ extension LoopDataManager {
         updateGroup.enter()
         carbStore.getGlucoseEffects(
             start: retrospectiveStart, end: nil,
-            effectVelocities: settings.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
+            effectVelocities: FeatureFlags.dynamicCarbAbsorptionEnabled ? insulinCounteractionEffects : nil
         ) { result in
             switch result {
             case .failure(let error):
