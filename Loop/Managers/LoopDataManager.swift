@@ -12,7 +12,12 @@ import HealthKit
 import LoopKit
 import LoopCore
 
-final class LoopDataManager: LoopSettingsAlerterDelegate {
+protocol PresetActivationObserver: AnyObject {
+    func presetActivated(context: TemporaryScheduleOverride.Context, duration: TemporaryScheduleOverride.Duration)
+    func presetDeactivated(context: TemporaryScheduleOverride.Context)
+}
+
+final class LoopDataManager {
     enum LoopUpdateContext: Int {
         case bolus
         case carbs
@@ -39,18 +44,20 @@ final class LoopDataManager: LoopSettingsAlerterDelegate {
 
     private let analyticsServicesManager: AnalyticsServicesManager
 
-    let loopSettingsAlerter: LoopSettingsAlerter
-    
     private let now: () -> Date
 
     private let automaticDosingStatus: AutomaticDosingStatus
+
+    private let alertManager: AlertManager
 
     lazy private var cancellables = Set<AnyCancellable>()
 
     // References to registered notification center observers
     private var notificationObservers: [Any] = []
     
-    private var overrideObserver: NSKeyValueObservation? = nil
+    private var overrideIntentObserver: NSKeyValueObservation? = nil
+
+    weak var presetActivationObserver: PresetActivationObserver?
 
     deinit {
         for observer in notificationObservers {
@@ -74,7 +81,7 @@ final class LoopDataManager: LoopSettingsAlerterDelegate {
         dosingDecisionStore: DosingDecisionStoreProtocol,
         latestStoredSettingsProvider: LatestStoredSettingsProvider,
         now: @escaping () -> Date = { Date() },
-        alertIssuer: AlertIssuer? = nil,
+        alertManager: AlertManager,
         pumpInsulinType: InsulinType?,
         automaticDosingStatus: AutomaticDosingStatus
     ) {
@@ -104,12 +111,11 @@ final class LoopDataManager: LoopSettingsAlerterDelegate {
 
         self.automaticDosingStatus = automaticDosingStatus
 
+        self.alertManager = alertManager
+
         retrospectiveCorrection = settings.enabledRetrospectiveCorrectionAlgorithm
 
-        loopSettingsAlerter = LoopSettingsAlerter(alertIssuer: alertIssuer)
-        loopSettingsAlerter.delegate = self
-
-        overrideObserver = UserDefaults.appGroup?.observe(\.intentExtensionOverrideToSet, options: [.new], changeHandler: {[weak self] (defaults, change) in
+        overrideIntentObserver = UserDefaults.appGroup?.observe(\.intentExtensionOverrideToSet, options: [.new], changeHandler: {[weak self] (defaults, change) in
             guard let name = change.newValue??.lowercased(), let appGroup = UserDefaults.appGroup else {
                 return
             }
@@ -121,7 +127,11 @@ final class LoopDataManager: LoopSettingsAlerterDelegate {
             
             self?.logger.default("Override Intent: setting override named '%s'", String(describing: name))
             self?.mutateSettings { settings in
+                if let oldPreset = settings.scheduleOverride {
+                    self?.presetActivationObserver?.presetDeactivated(context: oldPreset.context)
+                }
                 settings.scheduleOverride = preset.createOverride(enactTrigger: .remote("Siri"))
+                self?.presetActivationObserver?.presetActivated(context: .preset(preset), duration: preset.duration)
             }
             // Remove the override from UserDefaults so we don't set it multiple times
             appGroup.intentExtensionOverrideToSet = nil
@@ -218,6 +228,13 @@ final class LoopDataManager: LoopSettingsAlerterDelegate {
 
         if newValue.scheduleOverride != oldValue.scheduleOverride {
             overrideHistory.recordOverride(settings.scheduleOverride)
+
+            if let oldPreset = oldValue.scheduleOverride {
+                self.presetActivationObserver?.presetDeactivated(context: oldPreset.context)
+            }
+            if let newPreset = newValue.scheduleOverride {
+                self.presetActivationObserver?.presetActivated(context: newPreset.context, duration: newPreset.duration)
+            }
 
             // Invalidate cached effects affected by the override
             self.carbEffect = nil

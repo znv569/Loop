@@ -343,11 +343,12 @@ final class DeviceDataManager {
             carbStore: carbStore,
             dosingDecisionStore: dosingDecisionStore,
             latestStoredSettingsProvider: settingsManager,
-            alertIssuer: alertManager,
+            alertManager: alertManager,
             pumpInsulinType: pumpManager?.status.insulinType,
             automaticDosingStatus: closedLoopStatus
         )
         cacheStore.delegate = loopManager
+        loopManager.presetActivationObserver = alertManager
         
         watchManager = WatchDataManager(deviceManager: self, healthStore: healthStore)
 

@@ -13,6 +13,7 @@ import LoopCore
 import WatchConnectivity
 import os.log
 
+
 class LoopDataManager {
     let carbStore: CarbStore
 

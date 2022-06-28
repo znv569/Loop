@@ -33,8 +33,6 @@ public struct LoopSettings: Equatable {
 
     public var legacyWorkoutTargetRange: ClosedRange<HKQuantity>?
 
-    public var indefiniteWorkoutOverrideEnabledDate: Date?
-
     public var overridePresets: [TemporaryScheduleOverridePreset] = []
 
     public var scheduleOverride: TemporaryScheduleOverride? {
@@ -171,10 +169,6 @@ extension LoopSettings {
             return nil
         }
 
-        if duration.isInfinite {
-            indefiniteWorkoutOverrideEnabledDate = date
-        }
-        
         return TemporaryScheduleOverride(
             context: .legacyWorkout,
             settings: TemporaryScheduleOverrideSettings(targetRange: legacyWorkoutTargetRange),
@@ -193,10 +187,6 @@ extension LoopSettings {
 
         guard let scheduleOverride = scheduleOverride else { return }
         
-        if isScheduleOverrideInfiniteWorkout {
-            indefiniteWorkoutOverrideEnabledDate = nil
-        }
-
         if let context = context {
             if scheduleOverride.context == context {
                 self.scheduleOverride = nil
@@ -246,8 +236,6 @@ extension LoopSettings: RawRepresentable {
             self.legacyWorkoutTargetRange = DoubleRange(rawValue: rawLegacyWorkoutTargetRange)?.quantityRange(for: LoopSettings.codingGlucoseUnit)
         }
 
-        self.indefiniteWorkoutOverrideEnabledDate = rawValue["indefiniteWorkoutOverrideEnabledDate"] as? Date
-
         if let rawPresets = rawValue["overridePresets"] as? [TemporaryScheduleOverridePreset.RawValue] {
             self.overridePresets = rawPresets.compactMap(TemporaryScheduleOverridePreset.init(rawValue:))
         }
@@ -284,7 +272,6 @@ extension LoopSettings: RawRepresentable {
         raw["glucoseTargetRangeSchedule"] = glucoseTargetRangeSchedule?.rawValue
         raw["preMealTargetRange"] = preMealTargetRange?.doubleRange(for: LoopSettings.codingGlucoseUnit).rawValue
         raw["legacyWorkoutTargetRange"] = legacyWorkoutTargetRange?.doubleRange(for: LoopSettings.codingGlucoseUnit).rawValue
-        raw["indefiniteWorkoutOverrideEnabledDate"] = indefiniteWorkoutOverrideEnabledDate
         raw["preMealOverride"] = preMealOverride?.rawValue
         raw["scheduleOverride"] = scheduleOverride?.rawValue
         raw["maximumBasalRatePerHour"] = maximumBasalRatePerHour
