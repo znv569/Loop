@@ -48,8 +48,6 @@ final class LoopDataManager {
 
     private let automaticDosingStatus: AutomaticDosingStatus
 
-    private let alertManager: AlertManager
-
     lazy private var cancellables = Set<AnyCancellable>()
 
     // References to registered notification center observers
@@ -81,7 +79,6 @@ final class LoopDataManager {
         dosingDecisionStore: DosingDecisionStoreProtocol,
         latestStoredSettingsProvider: LatestStoredSettingsProvider,
         now: @escaping () -> Date = { Date() },
-        alertManager: AlertManager,
         pumpInsulinType: InsulinType?,
         automaticDosingStatus: AutomaticDosingStatus
     ) {
@@ -110,8 +107,6 @@ final class LoopDataManager {
         self.lockedPumpInsulinType = Locked(pumpInsulinType)
 
         self.automaticDosingStatus = automaticDosingStatus
-
-        self.alertManager = alertManager
 
         retrospectiveCorrection = settings.enabledRetrospectiveCorrectionAlgorithm
 
