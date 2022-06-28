@@ -45,53 +45,72 @@ class SettingsManager {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] note in
                 let context = note.userInfo?[LoopDataManager.LoopUpdateContextKey] as! LoopDataManager.LoopUpdateContext.RawValue
-                if case .preferences = LoopDataManager.LoopUpdateContext(rawValue: context) {
-                    self?.storeSettings()
+                if case .preferences = LoopDataManager.LoopUpdateContext(rawValue: context), let loopDataManager = note.object as? LoopDataManager {
+                    self?.storeSettings(newLoopSettings: loopDataManager.settings)
                 }
             }
             .store(in: &cancellables)
     }
 
-    var loopSettings: LoopSettings? {
-        guard let storedSettings = latestSettings else {
-            return nil
-        }
+    var loopSettings: LoopSettings {
+        get {
+            guard let storedSettings = latestSettings else {
+                if let legacySettings = UserDefaults.appGroup?.legacyLoopSettings {
+                    // migrate
+                    storeSettings(newLoopSettings: legacySettings)
+                    // TODO: remove old preferences
 
-        return LoopSettings(
-            dosingEnabled: storedSettings.dosingEnabled,
-            glucoseTargetRangeSchedule: storedSettings.glucoseTargetRangeSchedule,
-            preMealTargetRange: storedSettings.preMealTargetRange,
-            legacyWorkoutTargetRange: storedSettings.workoutTargetRange,
-            overridePresets: storedSettings.overridePresets,
-            scheduleOverride: storedSettings.scheduleOverride,
-            preMealOverride: storedSettings.preMealOverride,
-            maximumBasalRatePerHour: storedSettings.maximumBasalRatePerHour,
-            maximumBolus: storedSettings.maximumBolus,
-            suspendThreshold: storedSettings.suspendThreshold,
-            dosingStrategy: storedSettings.dosingStrategy)
+                    return legacySettings
+                } else {
+                    return LoopSettings()
+                }
+            }
+
+            return LoopSettings(
+                dosingEnabled: storedSettings.dosingEnabled,
+                glucoseTargetRangeSchedule: storedSettings.glucoseTargetRangeSchedule,
+                preMealTargetRange: storedSettings.preMealTargetRange,
+                legacyWorkoutTargetRange: storedSettings.workoutTargetRange,
+                overridePresets: storedSettings.overridePresets,
+                scheduleOverride: storedSettings.scheduleOverride,
+                preMealOverride: storedSettings.preMealOverride,
+                maximumBasalRatePerHour: storedSettings.maximumBasalRatePerHour,
+                maximumBolus: storedSettings.maximumBolus,
+                suspendThreshold: storedSettings.suspendThreshold,
+                dosingStrategy: storedSettings.dosingStrategy)
+        }
     }
 
-    func storeSettings(notificationSettings: NotificationSettings? = nil,
+    func storeSettings(newLoopSettings: LoopSettings? = nil, notificationSettings: NotificationSettings? = nil,
                        controllerDevice: StoredSettings.ControllerDevice? = nil,
                        cgmDevice: HKDevice? = nil,
                        pumpDevice: HKDevice? = nil)
     {
-        guard let appGroup = UserDefaults.appGroup, let loopSettings = appGroup.legacyLoopSettings, let deviceToken = deviceToken else {
+
+        if FeatureFlags.remoteOverridesEnabled {
+            guard deviceToken != nil else {
+                return
+            }
+        }
+
+        guard let appGroup = UserDefaults.appGroup else {
             return
         }
 
+        let newLoopSettings = newLoopSettings ?? loopSettings
+
         let settings = StoredSettings(date: Date(),
-                                      dosingEnabled: loopSettings.dosingEnabled,
-                                      glucoseTargetRangeSchedule: loopSettings.glucoseTargetRangeSchedule,
-                                      preMealTargetRange: loopSettings.preMealTargetRange,
-                                      workoutTargetRange: loopSettings.legacyWorkoutTargetRange,
-                                      overridePresets: loopSettings.overridePresets,
-                                      scheduleOverride: loopSettings.scheduleOverride,
-                                      preMealOverride: loopSettings.preMealOverride,
-                                      maximumBasalRatePerHour: loopSettings.maximumBasalRatePerHour,
-                                      maximumBolus: loopSettings.maximumBolus,
-                                      suspendThreshold: loopSettings.suspendThreshold,
-                                      deviceToken: deviceToken.hexadecimalString,
+                                      dosingEnabled: newLoopSettings.dosingEnabled,
+                                      glucoseTargetRangeSchedule: newLoopSettings.glucoseTargetRangeSchedule,
+                                      preMealTargetRange: newLoopSettings.preMealTargetRange,
+                                      workoutTargetRange: newLoopSettings.legacyWorkoutTargetRange,
+                                      overridePresets: newLoopSettings.overridePresets,
+                                      scheduleOverride: newLoopSettings.scheduleOverride,
+                                      preMealOverride: newLoopSettings.preMealOverride,
+                                      maximumBasalRatePerHour: newLoopSettings.maximumBasalRatePerHour,
+                                      maximumBolus: newLoopSettings.maximumBolus,
+                                      suspendThreshold: newLoopSettings.suspendThreshold,
+                                      deviceToken: deviceToken?.hexadecimalString,
                                       insulinType: deviceStatusProvider?.pumpManagerStatus?.insulinType,
                                       defaultRapidActingModel: appGroup.defaultRapidActingModel.map(StoredInsulinModel.init),
                                       basalRateSchedule: appGroup.basalRateSchedule,
@@ -101,7 +120,7 @@ class SettingsManager {
                                       controllerDevice: controllerDevice ?? UIDevice.current.controllerDevice,
                                       cgmDevice: cgmDevice ?? deviceStatusProvider?.cgmManagerStatus?.device,
                                       pumpDevice: pumpDevice ?? deviceStatusProvider?.pumpManagerStatus?.device,
-                                      bloodGlucoseUnit: loopSettings.glucoseUnit)
+                                      bloodGlucoseUnit: newLoopSettings.glucoseUnit)
 
         if let latestSettings = latestSettings, latestSettings == settings {
             // Skipping unchanged settings store

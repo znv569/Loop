@@ -131,13 +131,8 @@ extension UserDefaults {
                     maximumBolus: maximumBolus,
                     suspendThreshold: suspendThreshold
                 )
-                self.legacyLoopSettings = settings
-
                 return settings
             }
-        }
-        set {
-            set(newValue?.rawValue, forKey: Key.loopSettings.rawValue)
         }
     }
 

@@ -216,7 +216,6 @@ public final class AlertManager {
         let now = getCurrentDate()
         var stillPendingNotifications = [StoredLoopNotRunningNotification]()
         for notification in UserDefaults.appGroup?.loopNotRunningNotifications ?? [] {
-            print("Comparing alert \(notification.alertAt) to \(now) (real date = \(Date())")
             if notification.alertAt < now {
                 let alertIdentifier = Alert.Identifier(managerIdentifier: "Loop", alertIdentifier: "loopNotLooping")
                 let content = Alert.Content(title: notification.title, body: notification.body, acknowledgeActionButtonLabel: "ios-notification-default")

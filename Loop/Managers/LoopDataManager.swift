@@ -69,7 +69,7 @@ final class LoopDataManager {
         basalRateSchedule: BasalRateSchedule? = UserDefaults.appGroup?.basalRateSchedule,
         carbRatioSchedule: CarbRatioSchedule? = UserDefaults.appGroup?.carbRatioSchedule,
         insulinSensitivitySchedule: InsulinSensitivitySchedule? = UserDefaults.appGroup?.insulinSensitivitySchedule,
-        settings: LoopSettings = UserDefaults.appGroup?.legacyLoopSettings ?? LoopSettings(),
+        settings: LoopSettings,
         overrideHistory: TemporaryScheduleOverrideHistory,
         analyticsServicesManager: AnalyticsServicesManager,
         localCacheDuration: TimeInterval = .days(1),
@@ -183,8 +183,8 @@ final class LoopDataManager {
         // Cancel any active temp basal when going into closed loop off mode
         // The dispatch is necessary in case this is coming from a didSet already on the settings struct.
         self.automaticDosingStatus.$isClosedLoop
-            .dropFirst()
             .removeDuplicates()
+            .dropFirst()
             .receive(on: DispatchQueue.main)
             .sink { if !$0 {
                 self.mutateSettings { settings in
@@ -237,7 +237,6 @@ final class LoopDataManager {
             self.insulinEffect = nil
         }
 
-        UserDefaults.appGroup?.legacyLoopSettings = newValue
         notify(forChange: .preferences)
         analyticsServicesManager.didChangeLoopSettings(from: oldValue, to: newValue)
     }
