@@ -66,9 +66,9 @@ final class LoopDataManager {
     init(
         lastLoopCompleted: Date?,
         basalDeliveryState: PumpManagerStatus.BasalDeliveryState?,
-        basalRateSchedule: BasalRateSchedule? = UserDefaults.appGroup?.basalRateSchedule,
-        carbRatioSchedule: CarbRatioSchedule? = UserDefaults.appGroup?.carbRatioSchedule,
-        insulinSensitivitySchedule: InsulinSensitivitySchedule? = UserDefaults.appGroup?.insulinSensitivitySchedule,
+        basalRateSchedule: BasalRateSchedule?,
+        carbRatioSchedule: CarbRatioSchedule?,
+        insulinSensitivitySchedule: InsulinSensitivitySchedule?,
         settings: LoopSettings,
         overrideHistory: TemporaryScheduleOverrideHistory,
         analyticsServicesManager: AnalyticsServicesManager,
@@ -412,8 +412,9 @@ extension LoopDataManager {
         }
         set {
             doseStore.basalProfile = newValue
-            UserDefaults.appGroup?.basalRateSchedule = newValue
-            notify(forChange: .preferences)
+            mutateSettings { settings in
+                settings.basalRateSchedule = newValue
+            }
 
             if let newValue = newValue, let oldValue = doseStore.basalProfile, newValue.items != oldValue.items {
                 analyticsServicesManager.didChangeBasalRateSchedule()
@@ -434,13 +435,14 @@ extension LoopDataManager {
         }
         set {
             carbStore.carbRatioSchedule = newValue
-            UserDefaults.appGroup?.carbRatioSchedule = newValue
 
             // Invalidate cached effects based on this schedule
             carbEffect = nil
             carbsOnBoard = nil
 
-            notify(forChange: .preferences)
+            mutateSettings { settings in
+                settings.carbRatioSchedule = newValue
+            }
         }
     }
 
@@ -452,16 +454,18 @@ extension LoopDataManager {
     /// The length of time insulin has an effect on blood glucose
     var defaultRapidActingModel: ExponentialInsulinModelPreset? {
         get {
-            return UserDefaults.appGroup?.defaultRapidActingModel
+            return settings.defaultRapidActingModel
         }
         set {
             doseStore.insulinModelProvider = PresetInsulinModelProvider(defaultRapidActingModel: newValue)
-            UserDefaults.appGroup?.defaultRapidActingModel = newValue
 
             self.dataAccessQueue.async {
                 // Invalidate cached effects based on this schedule
                 self.insulinEffect = nil
 
+                self.mutateSettings { settings in
+                    settings.defaultRapidActingModel = newValue
+                }
                 self.notify(forChange: .preferences)
             }
 
@@ -479,15 +483,15 @@ extension LoopDataManager {
             carbStore.insulinSensitivitySchedule = newValue
             doseStore.insulinSensitivitySchedule = newValue
 
-            UserDefaults.appGroup?.insulinSensitivitySchedule = newValue
-
             dataAccessQueue.async {
                 // Invalidate cached effects based on this schedule
                 self.carbEffect = nil
                 self.carbsOnBoard = nil
                 self.insulinEffect = nil
 
-                self.notify(forChange: .preferences)
+                self.mutateSettings { settings in
+                    settings.insulinSensitivitySchedule = newValue
+                }
             }
         }
     }

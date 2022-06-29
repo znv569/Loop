@@ -29,6 +29,12 @@ public struct LoopSettings: Equatable {
 
     public var glucoseTargetRangeSchedule: GlucoseRangeSchedule?
 
+    public var insulinSensitivitySchedule: InsulinSensitivitySchedule?
+
+    public var basalRateSchedule: BasalRateSchedule?
+
+    public var carbRatioSchedule: CarbRatioSchedule?
+
     public var preMealTargetRange: ClosedRange<HKQuantity>?
 
     public var legacyWorkoutTargetRange: ClosedRange<HKQuantity>?
@@ -67,6 +73,8 @@ public struct LoopSettings: Equatable {
     
     public var dosingStrategy: DosingStrategy = .tempBasalOnly
 
+    public var defaultRapidActingModel: ExponentialInsulinModelPreset?
+
     public var glucoseUnit: HKUnit? {
         return glucoseTargetRangeSchedule?.unit
     }
@@ -74,6 +82,9 @@ public struct LoopSettings: Equatable {
     public init(
         dosingEnabled: Bool = false,
         glucoseTargetRangeSchedule: GlucoseRangeSchedule? = nil,
+        insulinSensitivitySchedule: InsulinSensitivitySchedule? = nil,
+        basalRateSchedule: BasalRateSchedule? = nil,
+        carbRatioSchedule: CarbRatioSchedule? = nil,
         preMealTargetRange: ClosedRange<HKQuantity>? = nil,
         legacyWorkoutTargetRange: ClosedRange<HKQuantity>? = nil,
         overridePresets: [TemporaryScheduleOverridePreset]? = nil,
@@ -82,10 +93,14 @@ public struct LoopSettings: Equatable {
         maximumBasalRatePerHour: Double? = nil,
         maximumBolus: Double? = nil,
         suspendThreshold: GlucoseThreshold? = nil,
-        dosingStrategy: DosingStrategy = .tempBasalOnly
+        dosingStrategy: DosingStrategy = .tempBasalOnly,
+        defaultRapidActingModel: ExponentialInsulinModelPreset? = nil
     ) {
         self.dosingEnabled = dosingEnabled
         self.glucoseTargetRangeSchedule = glucoseTargetRangeSchedule
+        self.insulinSensitivitySchedule = insulinSensitivitySchedule
+        self.basalRateSchedule = basalRateSchedule
+        self.carbRatioSchedule = carbRatioSchedule
         self.preMealTargetRange = preMealTargetRange
         self.legacyWorkoutTargetRange = legacyWorkoutTargetRange
         self.overridePresets = overridePresets ?? []
@@ -95,6 +110,7 @@ public struct LoopSettings: Equatable {
         self.maximumBolus = maximumBolus
         self.suspendThreshold = suspendThreshold
         self.dosingStrategy = dosingStrategy
+        self.defaultRapidActingModel = defaultRapidActingModel
     }
 }
 

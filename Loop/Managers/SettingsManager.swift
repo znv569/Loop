@@ -50,25 +50,32 @@ class SettingsManager {
                 }
             }
             .store(in: &cancellables)
+
+        // Migrate old settings from UserDefaults
+        if var legacyLoopSettings = UserDefaults.appGroup?.legacyLoopSettings {
+            legacyLoopSettings.insulinSensitivitySchedule = UserDefaults.appGroup?.legacyInsulinSensitivitySchedule
+            legacyLoopSettings.basalRateSchedule = UserDefaults.appGroup?.legacyBasalRateSchedule
+            legacyLoopSettings.carbRatioSchedule = UserDefaults.appGroup?.legacyCarbRatioSchedule
+            legacyLoopSettings.defaultRapidActingModel = UserDefaults.appGroup?.legacyDefaultRapidActingModel
+
+            storeSettings(newLoopSettings: legacyLoopSettings)
+
+            UserDefaults.appGroup?.removeLegacyLoopSettings()
+        }
     }
 
     var loopSettings: LoopSettings {
         get {
             guard let storedSettings = latestSettings else {
-                if let legacySettings = UserDefaults.appGroup?.legacyLoopSettings {
-                    // migrate
-                    storeSettings(newLoopSettings: legacySettings)
-                    // TODO: remove old preferences
-
-                    return legacySettings
-                } else {
-                    return LoopSettings()
-                }
+                return LoopSettings()
             }
 
             return LoopSettings(
                 dosingEnabled: storedSettings.dosingEnabled,
                 glucoseTargetRangeSchedule: storedSettings.glucoseTargetRangeSchedule,
+                insulinSensitivitySchedule: storedSettings.insulinSensitivitySchedule,
+                basalRateSchedule: storedSettings.basalRateSchedule,
+                carbRatioSchedule: storedSettings.carbRatioSchedule,
                 preMealTargetRange: storedSettings.preMealTargetRange,
                 legacyWorkoutTargetRange: storedSettings.workoutTargetRange,
                 overridePresets: storedSettings.overridePresets,
@@ -77,27 +84,23 @@ class SettingsManager {
                 maximumBasalRatePerHour: storedSettings.maximumBasalRatePerHour,
                 maximumBolus: storedSettings.maximumBolus,
                 suspendThreshold: storedSettings.suspendThreshold,
-                dosingStrategy: storedSettings.dosingStrategy)
+                dosingStrategy: storedSettings.dosingStrategy,
+                defaultRapidActingModel: storedSettings.defaultRapidActingModel?.presetForRapidActingInsulin)
         }
     }
 
-    func storeSettings(newLoopSettings: LoopSettings? = nil, notificationSettings: NotificationSettings? = nil,
-                       controllerDevice: StoredSettings.ControllerDevice? = nil,
-                       cgmDevice: HKDevice? = nil,
-                       pumpDevice: HKDevice? = nil)
+    func storeSettings(newLoopSettings: LoopSettings? = nil, notificationSettings: NotificationSettings? = nil)
     {
 
+        // Don't save without deviceToken if running with remote overrides
         if FeatureFlags.remoteOverridesEnabled {
             guard deviceToken != nil else {
                 return
             }
         }
 
-        guard let appGroup = UserDefaults.appGroup else {
-            return
-        }
-
         let newLoopSettings = newLoopSettings ?? loopSettings
+        let newNotificationSettings = notificationSettings ?? settingsStore.latestSettings?.notificationSettings
 
         let settings = StoredSettings(date: Date(),
                                       dosingEnabled: newLoopSettings.dosingEnabled,
@@ -112,14 +115,14 @@ class SettingsManager {
                                       suspendThreshold: newLoopSettings.suspendThreshold,
                                       deviceToken: deviceToken?.hexadecimalString,
                                       insulinType: deviceStatusProvider?.pumpManagerStatus?.insulinType,
-                                      defaultRapidActingModel: appGroup.defaultRapidActingModel.map(StoredInsulinModel.init),
-                                      basalRateSchedule: appGroup.basalRateSchedule,
-                                      insulinSensitivitySchedule: appGroup.insulinSensitivitySchedule,
-                                      carbRatioSchedule: appGroup.carbRatioSchedule,
-                                      notificationSettings: notificationSettings ?? settingsStore.latestSettings?.notificationSettings,
-                                      controllerDevice: controllerDevice ?? UIDevice.current.controllerDevice,
-                                      cgmDevice: cgmDevice ?? deviceStatusProvider?.cgmManagerStatus?.device,
-                                      pumpDevice: pumpDevice ?? deviceStatusProvider?.pumpManagerStatus?.device,
+                                      defaultRapidActingModel: newLoopSettings.defaultRapidActingModel.map(StoredInsulinModel.init),
+                                      basalRateSchedule: newLoopSettings.basalRateSchedule,
+                                      insulinSensitivitySchedule: newLoopSettings.insulinSensitivitySchedule,
+                                      carbRatioSchedule: newLoopSettings.carbRatioSchedule,
+                                      notificationSettings: newNotificationSettings,
+                                      controllerDevice: UIDevice.current.controllerDevice,
+                                      cgmDevice: deviceStatusProvider?.cgmManagerStatus?.device,
+                                      pumpDevice: deviceStatusProvider?.pumpManagerStatus?.device,
                                       bloodGlucoseUnit: newLoopSettings.glucoseUnit)
 
         if let latestSettings = latestSettings, latestSettings == settings {
@@ -137,19 +140,10 @@ class SettingsManager {
             }
 
             let notificationSettings = NotificationSettings(notificationSettings)
-            let controllerDevice = UIDevice.current.controllerDevice
-            let cgmDevice = self.deviceStatusProvider?.cgmManagerStatus?.device
-            let pumpDevice = self.deviceStatusProvider?.pumpManagerStatus?.device
 
-            if notificationSettings != latestSettings.notificationSettings ||
-                controllerDevice != latestSettings.controllerDevice ||
-                cgmDevice != latestSettings.cgmDevice ||
-                pumpDevice != latestSettings.pumpDevice
+            if notificationSettings != latestSettings.notificationSettings
             {
-                self.storeSettings(notificationSettings: notificationSettings,
-                                   controllerDevice: controllerDevice,
-                                   cgmDevice: cgmDevice,
-                                   pumpDevice: pumpDevice)
+                self.storeSettings(notificationSettings: notificationSettings)
             }
         }
     }
