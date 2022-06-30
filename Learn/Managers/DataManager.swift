@@ -25,7 +25,7 @@ final class DataManager {
         carbRatioSchedule: CarbRatioSchedule? = UserDefaults.appGroup?.carbRatioSchedule,
         defaultRapidActingModel: ExponentialInsulinModelPreset? = UserDefaults.appGroup?.defaultRapidActingModel,
         insulinSensitivitySchedule: InsulinSensitivitySchedule? = UserDefaults.appGroup?.insulinSensitivitySchedule,
-        settings: LoopSettings = UserDefaults.appGroup?.loopSettings ?? LoopSettings()
+        settings: LoopSettings = UserDefaults.appGroup?.legacyLoopSettings ?? LoopSettings()
     ) {
         self.settings = settings
 

@@ -8,6 +8,7 @@
 
 import SwiftUI
 import LoopCore
+import LoopKit
 import LoopKitUI
 
 public struct DosingStrategySelectionView: View {

@@ -10,6 +10,7 @@ import LoopKit
 import UserNotifications
 import XCTest
 @testable import Loop
+@testable import DexcomCGMKitUI
 
 class AlertManagerTests: XCTestCase {
     
@@ -152,7 +153,8 @@ class AlertManagerTests: XCTestCase {
                                     handlers: [mockIssuer],
                                     userNotificationCenter: mockUserNotificationCenter,
                                     fileManager: mockFileManager,
-                                    alertStore: mockAlertStore)
+                                    alertStore: mockAlertStore,
+                                    bluetoothProvider: MockBluetoothProvider())
     }
 
     override func tearDown() {
@@ -224,7 +226,8 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             alertManager.playbackAlertsFromPersistence()
             XCTAssertEqual(alert, mockIssuer.issuedAlert)
         }
@@ -243,7 +246,8 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             alertManager.playbackAlertsFromPersistence()
             let expected = Alert(identifier: Self.mockIdentifier, foregroundContent: content, backgroundContent: content, trigger: .immediate)
             XCTAssertEqual(expected, mockIssuer.issuedAlert)
@@ -263,7 +267,8 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             alertManager.playbackAlertsFromPersistence()
 
             // The trigger for this should be `.delayed` by "something less than 15 seconds",
@@ -292,7 +297,8 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             alertManager.playbackAlertsFromPersistence()
 
             XCTAssertEqual(alert, mockIssuer.issuedAlert)
@@ -312,10 +318,11 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             alertManager.lookupAllUnretracted(managerIdentifier: Self.mockManagerIdentifier) { result in
                 try? XCTAssertEqual([PersistedAlert(alert: alert, issuedDate: date, retractedDate: nil, acknowledgedDate: nil)],
-                                    try XCTUnwrap(result.successValue))
+                                    XCTUnwrap(result.successValue))
             }
         }
     }
@@ -333,10 +340,11 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             alertManager.lookupAllUnacknowledgedUnretracted(managerIdentifier: Self.mockManagerIdentifier) { result in
                 try? XCTAssertEqual([PersistedAlert(alert: alert, issuedDate: date, retractedDate: nil, acknowledgedDate: nil)],
-                                    try XCTUnwrap(result.successValue))
+                                    XCTUnwrap(result.successValue))
             }
         }
     }
@@ -354,14 +362,15 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             let identifierExists = Self.mockIdentifier
             let identifierDoesNotExist = Alert.Identifier(managerIdentifier: "TestManagerIdentifier", alertIdentifier: "TestAlertIdentifier")
             alertManager.doesIssuedAlertExist(identifier: identifierExists) { result in
-                try? XCTAssertEqual(true, try XCTUnwrap(result.successValue))
+                try? XCTAssertEqual(true, XCTUnwrap(result.successValue))
             }
             alertManager.doesIssuedAlertExist(identifier: identifierDoesNotExist) { result in
-                try? XCTAssertEqual(false, try XCTUnwrap(result.successValue))
+                try? XCTAssertEqual(false, XCTUnwrap(result.successValue))
             }
         }
     }
@@ -376,13 +385,28 @@ class AlertManagerTests: XCTestCase {
                                         handlers: [mockIssuer],
                                         userNotificationCenter: mockUserNotificationCenter,
                                         fileManager: mockFileManager,
-                                        alertStore: mockAlertStore)
+                                        alertStore: mockAlertStore,
+                                        bluetoothProvider: MockBluetoothProvider())
             let now = Date()
             alertManager.recordRetractedAlert(alert, at: now)
             XCTAssertEqual(mockAlertStore.retractedAlert, alert)
             XCTAssertEqual(mockAlertStore.retractedAlertDate, now)
         }
     }
+
+    func testScheduleAlertForWorkoutReminder() {
+        alertManager.presetActivated(context: .legacyWorkout, duration: .indefinite)
+        XCTAssertNotNil(mockIssuer.issuedAlert)
+        alertManager.doesIssuedAlertExist(identifier: AlertManager.workoutOverrideReminderAlertIdentifier) { result in
+            try? XCTAssertEqual(true, XCTUnwrap(result.successValue))
+        }
+        alertManager.presetDeactivated(context: .legacyWorkout)
+        XCTAssertNotNil(mockIssuer.retractedAlertIdentifier)
+        alertManager.doesIssuedAlertExist(identifier: AlertManager.workoutOverrideReminderAlertIdentifier) { result in
+            try? XCTAssertEqual(false, XCTUnwrap(result.successValue))
+        }
+    }
+
 }
 
 extension Swift.Result {

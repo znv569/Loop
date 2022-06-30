@@ -37,7 +37,6 @@ class LoopAlertManagerTests: XCTestCase {
     var mockAlertStore = AlertManagerTests.MockAlertStore()
     var mockBluetoothProvider = MockBluetoothProvider()
     var alertManager: AlertManager!
-    var loopAlertsManager: LoopAlertsManager!
 
     override class func setUp() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -49,13 +48,8 @@ class LoopAlertManagerTests: XCTestCase {
                                     handlers: [mockIssuer],
                                     userNotificationCenter: mockUserNotificationCenter,
                                     fileManager: mockFileManager,
-                                    alertStore: mockAlertStore)
-
-        self.loopAlertsManager = LoopAlertsManager(alertManager: alertManager,
-                                                   bluetoothProvider: mockBluetoothProvider)
-
-
-
+                                    alertStore: mockAlertStore,
+                                    bluetoothProvider: mockBluetoothProvider)
     }
 
     override func tearDown() {
@@ -64,32 +58,32 @@ class LoopAlertManagerTests: XCTestCase {
     }
 
     func testLoopDidCompleteRecordsNotifications() {
-        loopAlertsManager.loopDidComplete()
+        alertManager.loopDidComplete()
         XCTAssertEqual(4, UserDefaults.appGroup?.loopNotRunningNotifications.count)
     }
 
     func testLoopFailureFor10MinutesDoesNotRecordAlert() {
-        loopAlertsManager.loopDidComplete()
+        alertManager.loopDidComplete()
         XCTAssertNil(mockAlertStore.issuedAlert)
-        loopAlertsManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(10))}
-        loopAlertsManager.inferDeliveredLoopNotRunningNotifications()
+        alertManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(10))}
+        alertManager.inferDeliveredLoopNotRunningNotifications()
         XCTAssertNil(mockAlertStore.issuedAlert)
     }
 
     func testLoopFailureFor30MinutesRecordsTimeSensitiveAlert() {
-        loopAlertsManager.loopDidComplete()
+        alertManager.loopDidComplete()
         XCTAssertNil(mockAlertStore.issuedAlert)
-        loopAlertsManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(30))}
-        loopAlertsManager.inferDeliveredLoopNotRunningNotifications()
+        alertManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(30))}
+        alertManager.inferDeliveredLoopNotRunningNotifications()
         XCTAssertEqual(3, UserDefaults.appGroup?.loopNotRunningNotifications.count)
         XCTAssertNotNil(mockAlertStore.issuedAlert)
         XCTAssertEqual(.timeSensitive, mockAlertStore.issuedAlert!.interruptionLevel)
     }
 
     func testLoopFailureFor65MinutesRecordsCriticalAlert() {
-        loopAlertsManager.loopDidComplete()
-        loopAlertsManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(65))}
-        loopAlertsManager.inferDeliveredLoopNotRunningNotifications()
+        alertManager.loopDidComplete()
+        alertManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(65))}
+        alertManager.inferDeliveredLoopNotRunningNotifications()
         XCTAssertEqual(1, UserDefaults.appGroup?.loopNotRunningNotifications.count)
         XCTAssertNotNil(mockAlertStore.issuedAlert)
         XCTAssertEqual(.critical, mockAlertStore.issuedAlert!.interruptionLevel)
