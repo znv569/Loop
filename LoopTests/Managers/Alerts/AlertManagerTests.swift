@@ -411,15 +411,12 @@ class AlertManagerTests: XCTestCase {
 
     func testScheduleAlertForWorkoutReminder() {
         alertManager.presetActivated(context: .legacyWorkout, duration: .indefinite)
-        XCTAssertNotNil(mockIssuer.issuedAlert)
-        alertManager.doesIssuedAlertExist(identifier: AlertManager.workoutOverrideReminderAlertIdentifier) { result in
-            try? XCTAssertEqual(true, XCTUnwrap(result.successValue))
-        }
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockIssuer.issuedAlert?.identifier)
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockAlertStore.issuedAlert?.identifier)
+
         alertManager.presetDeactivated(context: .legacyWorkout)
-        XCTAssertNotNil(mockIssuer.retractedAlertIdentifier)
-        alertManager.doesIssuedAlertExist(identifier: AlertManager.workoutOverrideReminderAlertIdentifier) { result in
-            try? XCTAssertEqual(false, XCTUnwrap(result.successValue))
-        }
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockIssuer.retractedAlertIdentifier)
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockAlertStore.retractededAlertIdentifier)
     }
 
     func testLoopDidCompleteRecordsNotifications() {
