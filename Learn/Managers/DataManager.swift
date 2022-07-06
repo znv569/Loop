@@ -21,10 +21,10 @@ final class DataManager {
     let settings: LoopSettings
 
     init(
-        basalRateSchedule: BasalRateSchedule? = UserDefaults.appGroup?.basalRateSchedule,
-        carbRatioSchedule: CarbRatioSchedule? = UserDefaults.appGroup?.carbRatioSchedule,
-        defaultRapidActingModel: ExponentialInsulinModelPreset? = UserDefaults.appGroup?.defaultRapidActingModel,
-        insulinSensitivitySchedule: InsulinSensitivitySchedule? = UserDefaults.appGroup?.insulinSensitivitySchedule,
+        basalRateSchedule: BasalRateSchedule? = UserDefaults.appGroup?.legacyBasalRateSchedule,
+        carbRatioSchedule: CarbRatioSchedule? = UserDefaults.appGroup?.legacyCarbRatioSchedule,
+        defaultRapidActingModel: ExponentialInsulinModelPreset? = UserDefaults.appGroup?.legacyDefaultRapidActingModel,
+        insulinSensitivitySchedule: InsulinSensitivitySchedule? = UserDefaults.appGroup?.legacyInsulinSensitivitySchedule,
         settings: LoopSettings = UserDefaults.appGroup?.legacyLoopSettings ?? LoopSettings()
     ) {
         self.settings = settings
