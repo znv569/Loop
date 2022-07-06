@@ -1415,7 +1415,7 @@ final class StatusTableViewController: LoopChartsTableViewController {
                                           initialDosingEnabled: deviceManager.loopManager.settings.dosingEnabled,
                                           isClosedLoopAllowed: closedLoopStatus.$isClosedLoopAllowed,
                                           supportInfoProvider: deviceManager,
-                                          dosingStrategy: deviceManager.loopManager.settings.dosingStrategy,
+                                          automaticDosingStrategy: deviceManager.loopManager.settings.automaticDosingStrategy,
                                           availableSupports: supportManager.availableSupports,
                                           isOnboardingComplete: onboardingManager.isComplete,
                                           therapySettingsViewModelDelegate: deviceManager,
@@ -2012,9 +2012,9 @@ extension StatusTableViewController: SettingsViewModelDelegate {
         }
     }
     
-    func dosingStrategyChanged(_ strategy: DosingStrategy) {
+    func dosingStrategyChanged(_ strategy: AutomaticDosingStrategy) {
         self.deviceManager.loopManager.mutateSettings { settings in
-            settings.dosingStrategy = strategy
+            settings.automaticDosingStrategy = strategy
         }
     }
 
