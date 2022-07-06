@@ -100,7 +100,7 @@ class StatusViewController: UIViewController, NCWidgetProviding {
         observationEnabled: false,
         insulinModelProvider: PresetInsulinModelProvider(defaultRapidActingModel: settingsStore.latestSettings?.defaultRapidActingModel?.presetForRapidActingInsulin),
         longestEffectDuration: ExponentialInsulinModelPreset.rapidActingAdult.effectDuration,
-        basalProfile: defaults?.legacyBasalRateSchedule,
+        basalProfile: settingsStore.latestSettings?.basalRateSchedule,
         insulinSensitivitySchedule: settingsStore.latestSettings?.insulinSensitivitySchedule,
         provenanceIdentifier: HKSource.default().bundleIdentifier
     )
@@ -319,7 +319,7 @@ class StatusViewController: UIViewController, NCWidgetProviding {
                 self.charts.predictedGlucose.setPredictedGlucoseValues([])
             }
 
-            self.charts.predictedGlucose.targetGlucoseSchedule = defaults.legacyLoopSettings?.glucoseTargetRangeSchedule
+            self.charts.predictedGlucose.targetGlucoseSchedule = self.settingsStore.latestSettings?.glucoseTargetRangeSchedule
             self.charts.invalidateChart(atIndex: 0)
             self.charts.prerender()
             self.glucoseChartContentView.reloadChart()
