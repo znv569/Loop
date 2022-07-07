@@ -8,7 +8,7 @@
 import HealthKit
 import LoopKit
 
-public extension DosingStrategy {
+public extension AutomaticDosingStrategy {
     var title: String {
         switch self {
         case .tempBasalOnly:
@@ -71,7 +71,7 @@ public struct LoopSettings: Equatable {
 
     public var suspendThreshold: GlucoseThreshold? = nil
     
-    public var dosingStrategy: DosingStrategy = .tempBasalOnly
+    public var automaticDosingStrategy: AutomaticDosingStrategy = .tempBasalOnly
 
     public var defaultRapidActingModel: ExponentialInsulinModelPreset?
 
@@ -93,7 +93,7 @@ public struct LoopSettings: Equatable {
         maximumBasalRatePerHour: Double? = nil,
         maximumBolus: Double? = nil,
         suspendThreshold: GlucoseThreshold? = nil,
-        dosingStrategy: DosingStrategy = .tempBasalOnly,
+        automaticDosingStrategy: AutomaticDosingStrategy = .tempBasalOnly,
         defaultRapidActingModel: ExponentialInsulinModelPreset? = nil
     ) {
         self.dosingEnabled = dosingEnabled
@@ -109,7 +109,7 @@ public struct LoopSettings: Equatable {
         self.maximumBasalRatePerHour = maximumBasalRatePerHour
         self.maximumBolus = maximumBolus
         self.suspendThreshold = suspendThreshold
-        self.dosingStrategy = dosingStrategy
+        self.automaticDosingStrategy = automaticDosingStrategy
         self.defaultRapidActingModel = defaultRapidActingModel
     }
 }
@@ -272,9 +272,10 @@ extension LoopSettings: RawRepresentable {
             self.suspendThreshold = GlucoseThreshold(rawValue: rawThreshold)
         }
         
-        if let rawDosingStrategy = rawValue["dosingStrategy"] as? DosingStrategy.RawValue,
-            let dosingStrategy = DosingStrategy(rawValue: rawDosingStrategy) {
-            self.dosingStrategy = dosingStrategy
+        if let rawDosingStrategy = rawValue["dosingStrategy"] as? AutomaticDosingStrategy.RawValue,
+            let automaticDosingStrategy = AutomaticDosingStrategy(rawValue: rawDosingStrategy)
+        {
+            self.automaticDosingStrategy = automaticDosingStrategy
         }
     }
 
@@ -293,7 +294,7 @@ extension LoopSettings: RawRepresentable {
         raw["maximumBasalRatePerHour"] = maximumBasalRatePerHour
         raw["maximumBolus"] = maximumBolus
         raw["minimumBGGuard"] = suspendThreshold?.rawValue
-        raw["dosingStrategy"] = dosingStrategy.rawValue
+        raw["dosingStrategy"] = automaticDosingStrategy.rawValue
 
         return raw
     }

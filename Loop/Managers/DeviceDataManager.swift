@@ -335,9 +335,6 @@ final class DeviceDataManager {
         loopManager = LoopDataManager(
             lastLoopCompleted: statusExtensionManager.context?.lastLoopCompleted,
             basalDeliveryState: pumpManager?.status.basalDeliveryState,
-            basalRateSchedule: settingsManager.latestSettings?.basalRateSchedule,
-            carbRatioSchedule: settingsManager.latestSettings?.carbRatioSchedule,
-            insulinSensitivitySchedule: settingsManager.latestSettings?.insulinSensitivitySchedule,
             settings: settingsManager.loopSettings,
             overrideHistory: overrideHistory,
             analyticsServicesManager: analyticsServicesManager,

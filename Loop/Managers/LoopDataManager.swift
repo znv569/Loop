@@ -66,9 +66,6 @@ final class LoopDataManager {
     init(
         lastLoopCompleted: Date?,
         basalDeliveryState: PumpManagerStatus.BasalDeliveryState?,
-        basalRateSchedule: BasalRateSchedule?,
-        carbRatioSchedule: CarbRatioSchedule?,
-        insulinSensitivitySchedule: InsulinSensitivitySchedule?,
         settings: LoopSettings,
         overrideHistory: TemporaryScheduleOverrideHistory,
         analyticsServicesManager: AnalyticsServicesManager,
@@ -1630,7 +1627,7 @@ extension LoopDataManager {
 
             let dosingRecommendation: AutomaticDoseRecommendation?
 
-            switch settings.dosingStrategy {
+            switch settings.automaticDosingStrategy {
             case .automaticBolus:
                 let volumeRounder = { (_ units: Double) in
                     return self.delegate?.loopDataManager(self, roundBolusVolume: units) ?? units

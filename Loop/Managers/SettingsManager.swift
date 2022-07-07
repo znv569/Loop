@@ -84,7 +84,7 @@ class SettingsManager {
                 maximumBasalRatePerHour: storedSettings.maximumBasalRatePerHour,
                 maximumBolus: storedSettings.maximumBolus,
                 suspendThreshold: storedSettings.suspendThreshold,
-                dosingStrategy: storedSettings.dosingStrategy,
+                automaticDosingStrategy: storedSettings.automaticDosingStrategy,
                 defaultRapidActingModel: storedSettings.defaultRapidActingModel?.presetForRapidActingInsulin)
         }
     }

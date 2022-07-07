@@ -10,9 +10,24 @@ import LoopKit
 import UserNotifications
 import XCTest
 @testable import Loop
-@testable import DexcomCGMKitUI
 
 class AlertManagerTests: XCTestCase {
+
+    class MockBluetoothProvider: BluetoothProvider {
+        var bluetoothAuthorization: BluetoothAuthorization = .authorized
+
+        var bluetoothState: BluetoothState = .poweredOn
+
+        func authorizeBluetooth(_ completion: @escaping (BluetoothAuthorization) -> Void) {
+            completion(bluetoothAuthorization)
+        }
+
+        func addBluetoothObserver(_ observer: BluetoothObserver, queue: DispatchQueue) {
+        }
+
+        func removeBluetoothObserver(_ observer: BluetoothObserver) {
+        }
+    }
     
     class MockIssuer: AlertIssuer {
         var issuedAlert: Alert?
@@ -396,16 +411,46 @@ class AlertManagerTests: XCTestCase {
 
     func testScheduleAlertForWorkoutReminder() {
         alertManager.presetActivated(context: .legacyWorkout, duration: .indefinite)
-        XCTAssertNotNil(mockIssuer.issuedAlert)
-        alertManager.doesIssuedAlertExist(identifier: AlertManager.workoutOverrideReminderAlertIdentifier) { result in
-            try? XCTAssertEqual(true, XCTUnwrap(result.successValue))
-        }
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockIssuer.issuedAlert?.identifier)
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockAlertStore.issuedAlert?.identifier)
+
         alertManager.presetDeactivated(context: .legacyWorkout)
-        XCTAssertNotNil(mockIssuer.retractedAlertIdentifier)
-        alertManager.doesIssuedAlertExist(identifier: AlertManager.workoutOverrideReminderAlertIdentifier) { result in
-            try? XCTAssertEqual(false, XCTUnwrap(result.successValue))
-        }
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockIssuer.retractedAlertIdentifier)
+        XCTAssertEqual(AlertManager.workoutOverrideReminderAlertIdentifier, mockAlertStore.retractededAlertIdentifier)
     }
+
+    func testLoopDidCompleteRecordsNotifications() {
+        alertManager.loopDidComplete()
+        XCTAssertEqual(4, UserDefaults.appGroup?.loopNotRunningNotifications.count)
+    }
+
+    func testLoopFailureFor10MinutesDoesNotRecordAlert() {
+        alertManager.loopDidComplete()
+        XCTAssertNil(mockAlertStore.issuedAlert)
+        alertManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(10))}
+        alertManager.inferDeliveredLoopNotRunningNotifications()
+        XCTAssertNil(mockAlertStore.issuedAlert)
+    }
+
+    func testLoopFailureFor30MinutesRecordsTimeSensitiveAlert() {
+        alertManager.loopDidComplete()
+        XCTAssertNil(mockAlertStore.issuedAlert)
+        alertManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(30))}
+        alertManager.inferDeliveredLoopNotRunningNotifications()
+        XCTAssertEqual(3, UserDefaults.appGroup?.loopNotRunningNotifications.count)
+        XCTAssertNotNil(mockAlertStore.issuedAlert)
+        XCTAssertEqual(.timeSensitive, mockAlertStore.issuedAlert!.interruptionLevel)
+    }
+
+    func testLoopFailureFor65MinutesRecordsCriticalAlert() {
+        alertManager.loopDidComplete()
+        alertManager.getCurrentDate = { return Date().addingTimeInterval(.minutes(65))}
+        alertManager.inferDeliveredLoopNotRunningNotifications()
+        XCTAssertEqual(1, UserDefaults.appGroup?.loopNotRunningNotifications.count)
+        XCTAssertNotNil(mockAlertStore.issuedAlert)
+        XCTAssertEqual(.critical, mockAlertStore.issuedAlert!.interruptionLevel)
+    }
+
 
 }
 
