@@ -482,6 +482,8 @@
 		C19E96DF23D275F8003F79B0 /* LoopCompletionFreshness.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19E96DD23D2733F003F79B0 /* LoopCompletionFreshness.swift */; };
 		C19E96E023D275FA003F79B0 /* LoopCompletionFreshness.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19E96DD23D2733F003F79B0 /* LoopCompletionFreshness.swift */; };
 		C19F48742560ABFB003632D7 /* NSBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430DA58D1D4AEC230097D1CA /* NSBundle.swift */; };
+		C1A83BB128776DEF007D407F /* LoopKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1A83BB028776DEF007D407F /* LoopKit.framework */; };
+		C1A83BB928776E43007D407F /* MockKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1A83BB828776E43007D407F /* MockKitUI.framework */; };
 		C1AD4200256D61E500164DDD /* Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AD41FF256D61E500164DDD /* Comparable.swift */; };
 		C1C6591C1E1B1FDA0025CC58 /* recommend_temp_basal_dropping_then_rising.json in Resources */ = {isa = PBXBuildFile; fileRef = C1C6591B1E1B1FDA0025CC58 /* recommend_temp_basal_dropping_then_rising.json */; };
 		C1C660D1252E4DD5009B5C32 /* LoopConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C660D0252E4DD5009B5C32 /* LoopConstants.swift */; };
@@ -1427,6 +1429,9 @@
 		C19C8C20286776C20056D5E4 /* LoopKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LoopKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C19E96DD23D2733F003F79B0 /* LoopCompletionFreshness.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopCompletionFreshness.swift; sourceTree = "<group>"; };
 		C19F496225630504003632D7 /* Minizip.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Minizip.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1A83BB028776DEF007D407F /* LoopKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LoopKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1A83BB428776E2C007D407F /* LoopKitUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = LoopKitUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C1A83BB828776E43007D407F /* MockKitUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MockKitUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1AD41FF256D61E500164DDD /* Comparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparable.swift; sourceTree = "<group>"; };
 		C1C6591B1E1B1FDA0025CC58 /* recommend_temp_basal_dropping_then_rising.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = recommend_temp_basal_dropping_then_rising.json; sourceTree = "<group>"; };
 		C1C660D0252E4DD5009B5C32 /* LoopConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopConstants.swift; sourceTree = "<group>"; };
@@ -1587,7 +1592,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43D9002D21EB225D00AF44BF /* HealthKit.framework in Frameworks */,
-				C159C82F286787EF00A86EC0 /* LoopKit.framework in Frameworks */,
+				C1A83BB128776DEF007D407F /* LoopKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1632,11 +1637,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C159C825286785E000A86EC0 /* LoopUI.framework in Frameworks */,
+				C1A83BB928776E43007D407F /* MockKitUI.framework in Frameworks */,
 				C1CCF1172858FBAD0035389C /* SwiftCharts in Frameworks */,
-				C159C828286785E100A86EC0 /* LoopKitUI.framework in Frameworks */,
-				C159C82A286785E300A86EC0 /* MockKitUI.framework in Frameworks */,
-				C159C82D2867876500A86EC0 /* NotificationCenter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2470,9 +2472,9 @@
 		968DCD53F724DE56FFE51920 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C159C82E286787EF00A86EC0 /* LoopKit.framework */,
-				C159C8212867859800A86EC0 /* MockKitUI.framework */,
-				C159C8192867857000A86EC0 /* LoopKitUI.framework */,
+				C1A83BB828776E43007D407F /* MockKitUI.framework */,
+				C1A83BB428776E2C007D407F /* LoopKitUI.framework */,
+				C1A83BB028776DEF007D407F /* LoopKit.framework */,
 				C11B9D60286779C000500CF8 /* MockKit.framework */,
 				C11B9D61286779C000500CF8 /* MockKitUI.framework */,
 				C11B9D5D286778D000500CF8 /* LoopKitUI.framework */,
