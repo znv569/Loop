@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+    <entity name="BrandFoodCoreData" representedClassName="BrandFoodCoreData" syncable="YES" codeGenerationType="class">
+        <attribute name="name" attributeType="String"/>
+    </entity>
+    <entity name="FoodCoreData" representedClassName="FoodCoreData" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="brand" maxCount="1" deletionRule="Nullify" destinationEntity="BrandFoodCoreData"/>
+        <relationship name="units" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="UnitCoreData"/>
+    </entity>
+    <entity name="UnitCoreData" representedClassName="UnitCoreData" syncable="YES" codeGenerationType="class">
+        <attribute name="cal" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="carb" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="fat" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="protein" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+    </entity>
+    <elements>
+        <element name="BrandFoodCoreData" positionX="-36" positionY="9" width="128" height="44"/>
+        <element name="UnitCoreData" positionX="0" positionY="45" width="128" height="104"/>
+        <element name="FoodCoreData" positionX="27" positionY="72" width="128" height="74"/>
+    </elements>
 </model>
