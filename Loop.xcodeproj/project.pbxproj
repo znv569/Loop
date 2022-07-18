@@ -280,6 +280,11 @@
 		7D9BEEF32335CF8D005DCFD6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7D9BEEF52335CF8D005DCFD6 /* Localizable.strings */; };
 		80F864E62433BF5D0026EC26 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 80F864E42433BF5D0026EC26 /* InfoPlist.strings */; };
 		8477FE5A2885F23E000EE161 /* Food.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE582885F23E000EE161 /* Food.xcdatamodeld */; };
+		8477FE5D2885F5A2000EE161 /* TableCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE5C2885F5A2000EE161 /* TableCellModel.swift */; };
+		8477FE602885F6C4000EE161 /* TableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE5F2885F6C4000EE161 /* TableCell.swift */; };
+		8477FE632885F6FE000EE161 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8477FE622885F6FE000EE161 /* SnapKit */; };
+		8477FE652885F738000EE161 /* FoodEntryCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE642885F738000EE161 /* FoodEntryCellModel.swift */; };
+		8477FE672885F8FC000EE161 /* FoodEntryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE662885F8FC000EE161 /* FoodEntryCell.swift */; };
 		891B508524342BE1005DA578 /* CarbAndBolusFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */; };
 		892A5D59222F0A27008961AB /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892A5D58222F0A27008961AB /* Debug.swift */; };
 		892A5D692230C41D008961AB /* RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892A5D682230C41D008961AB /* RangeReplaceableCollection.swift */; };
@@ -1235,6 +1240,10 @@
 		7DD382791F8DBFC60071272B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Interface.strings; sourceTree = "<group>"; };
 		80F864E52433BF5D0026EC26 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8477FE592885F23E000EE161 /* Food.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Food.xcdatamodel; sourceTree = "<group>"; };
+		8477FE5C2885F5A2000EE161 /* TableCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCellModel.swift; sourceTree = "<group>"; };
+		8477FE5F2885F6C4000EE161 /* TableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCell.swift; sourceTree = "<group>"; };
+		8477FE642885F738000EE161 /* FoodEntryCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEntryCellModel.swift; sourceTree = "<group>"; };
+		8477FE662885F8FC000EE161 /* FoodEntryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEntryCell.swift; sourceTree = "<group>"; };
 		891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarbAndBolusFlowViewModel.swift; sourceTree = "<group>"; };
 		892A5D29222EF60A008961AB /* MockKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = MockKit.framework; path = Carthage/Build/iOS/MockKit.framework; sourceTree = SOURCE_ROOT; };
 		892A5D2B222EF60A008961AB /* MockKitUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = MockKitUI.framework; path = Carthage/Build/iOS/MockKitUI.framework; sourceTree = SOURCE_ROOT; };
@@ -1555,6 +1564,7 @@
 			files = (
 				43F5C2C91B929C09003EB13D /* HealthKit.framework in Frameworks */,
 				43D9FFD621EAE05D00AF44BF /* LoopCore.framework in Frameworks */,
+				8477FE632885F6FE000EE161 /* SnapKit in Frameworks */,
 				C19C8BBC28651E1C0056D5E4 /* Minizip.framework in Frameworks */,
 				C11B9D64286779C000500CF8 /* MockKitUI.framework in Frameworks */,
 				4F7528941DFE1E9500C322D6 /* LoopUI.framework in Frameworks */,
@@ -1761,6 +1771,7 @@
 		43757D131C06F26C00910CB9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8477FE5B2885F591000EE161 /* TableCellModel */,
 				43511CDD21FD80AD00566C63 /* RetrospectiveCorrection */,
 				A9FB75F0252BE320004C7D3F /* BolusDosingDecision.swift */,
 				C17824A41E1AD4D100D9D25C /* ManualBolusRecommendation.swift */,
@@ -2095,6 +2106,7 @@
 		43F5C2CF1B92A2ED003EB13D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8477FE5E2885F6B9000EE161 /* TableCell */,
 				897A5A9524C2175B00C4E71D /* BolusEntryView.swift */,
 				C1F8B1D122375E4200DD66CF /* BolusProgressTableViewCell.swift */,
 				C1F8B1DB223862D500DD66CF /* BolusProgressTableViewCell.xib */,
@@ -2371,6 +2383,24 @@
 				8477FE582885F23E000EE161 /* Food.xcdatamodeld */,
 			);
 			path = CoreData;
+			sourceTree = "<group>";
+		};
+		8477FE5B2885F591000EE161 /* TableCellModel */ = {
+			isa = PBXGroup;
+			children = (
+				8477FE5C2885F5A2000EE161 /* TableCellModel.swift */,
+				8477FE642885F738000EE161 /* FoodEntryCellModel.swift */,
+			);
+			path = TableCellModel;
+			sourceTree = "<group>";
+		};
+		8477FE5E2885F6B9000EE161 /* TableCell */ = {
+			isa = PBXGroup;
+			children = (
+				8477FE5F2885F6C4000EE161 /* TableCell.swift */,
+				8477FE662885F8FC000EE161 /* FoodEntryCell.swift */,
+			);
+			path = TableCell;
 			sourceTree = "<group>";
 		};
 		891B508324342BCA005DA578 /* View Models */ = {
@@ -2783,6 +2813,7 @@
 			name = Loop;
 			packageProductDependencies = (
 				C1F00C5F285A802A006302C5 /* SwiftCharts */,
+				8477FE622885F6FE000EE161 /* SnapKit */,
 			);
 			productName = Loop;
 			productReference = 43776F8C1B8022E90074EA36 /* Loop.app */;
@@ -3132,6 +3163,7 @@
 			mainGroup = 43776F831B8022E90074EA36;
 			packageReferences = (
 				C1CCF10B2858F4F70035389C /* XCRemoteSwiftPackageReference "SwiftCharts" */,
+				8477FE612885F6FE000EE161 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			productRefGroup = 43776F8D1B8022E90074EA36 /* Products */;
 			projectDirPath = "";
@@ -3411,6 +3443,7 @@
 				4311FB9B1F37FE1B00D4C0A7 /* TitleSubtitleTextFieldTableViewCell.swift in Sources */,
 				C1F2075C26D6F9B0007AB7EB /* ProfileExpirationAlerter.swift in Sources */,
 				B4FEEF7D24B8A71F00A8DF9B /* DeviceDataManager+DeviceStatus.swift in Sources */,
+				8477FE5D2885F5A2000EE161 /* TableCellModel.swift in Sources */,
 				E95D380324EADF36005E2F50 /* CarbStoreProtocol.swift in Sources */,
 				E98A55ED24EDD6380008715D /* LatestStoredSettingsProvider.swift in Sources */,
 				C1FB428F217921D600FAB378 /* PumpManagerUI.swift in Sources */,
@@ -3444,6 +3477,7 @@
 				43FCEEA9221A615B0013DD30 /* StatusChartsManager.swift in Sources */,
 				A9F703752489C9A000C98AD8 /* GlucoseStore+SimulatedCoreData.swift in Sources */,
 				43511CE321FD80E400566C63 /* StandardRetrospectiveCorrection.swift in Sources */,
+				8477FE652885F738000EE161 /* FoodEntryCellModel.swift in Sources */,
 				E95D380524EADF78005E2F50 /* GlucoseStoreProtocol.swift in Sources */,
 				43E3449F1B9D68E900C85C07 /* StatusTableViewController.swift in Sources */,
 				A96DAC242838325900D94E38 /* DiagnosticLog.swift in Sources */,
@@ -3469,6 +3503,7 @@
 				43C05CAF21EB2C24006FB252 /* NSBundle.swift in Sources */,
 				A91D2A3F26CF0FF80023B075 /* IconTitleSubtitleTableViewCell.swift in Sources */,
 				A967D94C24F99B9300CDDF8A /* OutputStream.swift in Sources */,
+				8477FE672885F8FC000EE161 /* FoodEntryCell.swift in Sources */,
 				1DB1065124467E18005542BD /* AlertManager.swift in Sources */,
 				1D9650C82523FBA100A1370B /* DeviceDataManager+BolusEntryViewModelDelegate.swift in Sources */,
 				43C0944A1CACCC73001F6403 /* NotificationManager.swift in Sources */,
@@ -3513,6 +3548,7 @@
 				43E93FB61E469A4000EAB8DB /* NumberFormatter.swift in Sources */,
 				C1FB428C217806A400FAB378 /* StateColorPalette.swift in Sources */,
 				1D6B1B6726866D89009AC446 /* AlertPermissionsChecker.swift in Sources */,
+				8477FE602885F6C4000EE161 /* TableCell.swift in Sources */,
 				4F08DE8F1E7BB871006741EA /* CollectionType+Loop.swift in Sources */,
 				A9F703772489D8AA00C98AD8 /* PersistentDeviceLog+SimulatedCoreData.swift in Sources */,
 				E9B080B1253BDA6300BAD8F8 /* UserDefaults+LoopIntents.swift in Sources */,
@@ -5174,6 +5210,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		8477FE612885F6FE000EE161 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		C1CCF10B2858F4F70035389C /* XCRemoteSwiftPackageReference "SwiftCharts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ivanschuetz/SwiftCharts";
@@ -5185,6 +5229,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8477FE622885F6FE000EE161 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8477FE612885F6FE000EE161 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
 		C11B9D5A286778A800500CF8 /* SwiftCharts */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C1CCF10B2858F4F70035389C /* XCRemoteSwiftPackageReference "SwiftCharts" */;

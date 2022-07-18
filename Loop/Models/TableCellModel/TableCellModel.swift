@@ -6,4 +6,28 @@
 //  Copyright © 2022 LoopKit Authors. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+public protocol TableCellIdentifiable {
+    var cellHeight: CGFloat { get }
+    var cellIdentifier: String { get }
+    var userInfo: [String: Any] { get set }
+}
+
+open class TableCellModel: TableCellIdentifiable {
+    // MARK: Properties
+
+    open var cellIdentifier: String {
+        ""
+    }
+
+    open var cellHeight: CGFloat {
+        UITableView.automaticDimension
+    }
+
+    open var userInfo: [String: Any] = [:]
+
+    // MARK: Initialization
+
+    public init() {}
+}
