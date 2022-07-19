@@ -14,7 +14,7 @@ public protocol TableCellIdentifiable {
     var userInfo: [String: Any] { get set }
 }
 
-open class TableCellModel: TableCellIdentifiable {
+open class TableCellModel: NSObject, TableCellIdentifiable  {
     // MARK: Properties
 
     open var cellIdentifier: String {
@@ -29,5 +29,5 @@ open class TableCellModel: TableCellIdentifiable {
 
     // MARK: Initialization
 
-    public init() {}
+    public override init() {}
 }

@@ -10,8 +10,9 @@ import Foundation
 import UIKit
 import SnapKit
  
-@objc protocol FoodEntryCellDelegate: AnyObject {
-    @objc optional func updateFoodEntrys()
+protocol FoodEntryCellDelegate: AnyObject {
+    func updateFoodEntrys()
+    func deleteCell(model: FoodEntryCellModel)
 }
 
 class FoodEntryCell: TableCell {
@@ -20,15 +21,32 @@ class FoodEntryCell: TableCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.textColor = .white
+        label.font = .systemFont(ofSize: 16, weight: .regular)
         return label
     }()
     
-
+    
+    private let arrowImageView: UIImageView = {
+       let iv = UIImageView()
+        iv.image = UIImage(systemName: "chevron.down")
+        iv.tintColor = .white
+        iv.contentMode = .scaleAspectFit
+        return iv
+    }()
+    
+    private lazy var nameArrowStack: UIStackView = {
+       let stack = UIStackView()
+        stack.spacing = 8
+        stack.addArrangedSubview(nameLabel)
+        stack.addArrangedSubview(arrowImageView)
+        return stack
+    }()
     
     private let selectedUnitLabel: UILabel = {
        let label = UILabel()
-        label.numberOfLines = 3
+        label.numberOfLines = 0
         label.textColor = .white
+        label.font = .systemFont(ofSize: 16, weight: .regular)
         return label
     }()
     
@@ -36,8 +54,19 @@ class FoodEntryCell: TableCell {
         let label = UILabel()
         label.numberOfLines = 2
         label.textColor = .white
+        label.font = .systemFont(ofSize: 17, weight: .regular)
         label.setContentHuggingPriority(.required, for: .horizontal)
         return label
+    }()
+    
+    private lazy var deleteButton: UIButton = {
+       let button = UIButton()
+        button.setImage(UIImage(systemName: "trash.fill"), for: .normal)
+        button.tintColor = .white
+        button.backgroundColor = UIColor.invalid
+        button.isHidden = true
+        button.addTarget(self, action: #selector(deleteModel), for: .touchUpInside)
+        return button
     }()
     
     
@@ -52,10 +81,11 @@ class FoodEntryCell: TableCell {
          return stack
      }()
     
-    
     private let unitsLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 15, weight: .regular)
         label.textColor = .white
         return label
     }()
@@ -63,7 +93,7 @@ class FoodEntryCell: TableCell {
     private lazy var detailStack: UIStackView = {
        let stack = UIStackView()
         stack.axis = .vertical
-        [unitStack, unitsLabel].forEach { stack.addArrangedSubview($0) }
+        [unitStack].forEach { stack.addArrangedSubview($0) }
         return stack
     }()
     
@@ -73,6 +103,8 @@ class FoodEntryCell: TableCell {
         tf.textAlignment = .center
         tf.textColor = .white
         tf.keyboardType = .decimalPad
+        tf.textColor = .white
+        tf.font = .systemFont(ofSize: 18, weight: .semibold)
         tf.addTarget(self, action: #selector(changeValueCount), for: [.valueChanged, .editingChanged])
         return tf
     }()
@@ -84,9 +116,9 @@ class FoodEntryCell: TableCell {
         return picker
     }()
     
-    private lazy var editStack: UIStackView = {
+    private lazy var editUnitStack: UIStackView = {
         let stack = UIStackView()
-         stack.axis = .vertical
+        stack.axis = .horizontal
         stack.spacing = 8
         let container = UIView()
         container.addSubview(countTextField)
@@ -94,11 +126,29 @@ class FoodEntryCell: TableCell {
          return stack
      }()
     
-    private lazy var mainStackStack: UIStackView = {
-       let stack = UIStackView()
+    private lazy var editStack: UIStackView = {
+        let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 8
-        [nameLabel, detailStack].forEach { stack.addArrangedSubview($0) }
+         [unitsLabel, editUnitStack].forEach { stack.addArrangedSubview($0) }
+         return stack
+     }()
+    
+    private lazy var mainStack: UIStackView = {
+       let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 10
+        [nameArrowStack, detailStack, editStack].forEach { stack.addArrangedSubview($0) }
+        return stack
+    }()
+    
+    private lazy var mainStackDelete: UIStackView = {
+       let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 8
+        let container = UIView()
+        container.addSubview(mainStack)
+        [deleteButton, container].forEach { stack.addArrangedSubview($0) }
         return stack
     }()
     
@@ -108,7 +158,7 @@ class FoodEntryCell: TableCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupView()
+        configureUI()
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -116,22 +166,34 @@ class FoodEntryCell: TableCell {
     }
     
     
-    override func setupView() {
-        contentView.addSubview(mainStackStack)
+    private func configureUI() {
+        contentView.addSubview(mainStackDelete)
         
         countLabel.snp.makeConstraints {
             $0.centerY.leading.trailing.equalToSuperview()
         }
         
-        mainStackStack.snp.makeConstraints {
-            $0.trailing.leading.equalToSuperview().inset(10)
-            $0.top.bottom.equalToSuperview().inset(10)
+        mainStackDelete.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        mainStack.snp.makeConstraints {
+            $0.trailing.leading.equalToSuperview().inset(20)
+            $0.top.bottom.equalToSuperview().inset(8)
         }
         
         countTextField.snp.makeConstraints {
-            $0.width.equalTo(50)
+            $0.width.equalTo(80)
             $0.centerY.leading.trailing.equalToSuperview()
         }
+        arrowImageView.snp.makeConstraints {
+            $0.width.equalTo(20)
+            $0.height.equalTo(20)
+        }
+        deleteButton.snp.makeConstraints {
+            $0.width.equalTo(50)
+        }
+        contentView.backgroundColor = .cellBackgroundColor
     }
     
     override func updateViews() {
@@ -142,14 +204,18 @@ class FoodEntryCell: TableCell {
         }
         
         model.updateView = { [weak self] in
-            self?.updateViews()
+            self?.updateModel(updateLayout: true)
         }
         model.updateMode = { [weak self] in
             self?.updateMode()
         }
         
-        updateMode()
-        updateModel()
+        self.detailStack.isHidden = model.mode == .full
+        self.editStack.isHidden =  model.mode == .short
+        self.deleteButton.isHidden =  model.mode == .short
+        self.arrowImageView.transform = model.mode == .full ? CGAffineTransform(rotationAngle: .pi) : .identity
+            
+        updateModel(updateLayout: false)
         pickerView.reloadAllComponents()
     }
     
@@ -163,35 +229,44 @@ class FoodEntryCell: TableCell {
         }
     }
     
-    private func updateModel() {
+    private func updateModel(updateLayout: Bool) {
         guard let model = model as? FoodEntryCellModel else { return }
         let nameAttr = NSMutableAttributedString(string: model.food.name ?? "", attributes: nil)
         if let brand = model.food.brand?.name {
-            nameAttr.append(NSAttributedString(string: "\n" + brand, attributes: [.font: UIFont.systemFont(ofSize: 19, weight: .semibold), .foregroundColor: UIColor.systemBlue]))
+            nameAttr.append(NSAttributedString(string: " " + brand, attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .semibold), .foregroundColor: UIColor.systemBlue]))
         }
         
         nameLabel.attributedText = nameAttr
-        countLabel.text = model.count.clean
+        countLabel.text = model.count.clean + " x"
         selectedUnitLabel.text = model.selectedUnit?.name
         countTextField.text = model.count.clean
         
         if let selectedUnit = model.selectedUnit {
-            let attString = NSMutableAttributedString(string: "уг: ", attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .bold), .foregroundColor: UIColor.systemBlue])
-            attString.append(NSAttributedString(string: (model.count * selectedUnit.carb).clean + "г", attributes: nil))
+            let attString = NSMutableAttributedString(string: "уг: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue])
+            attString.append(NSAttributedString(string: (model.count * selectedUnit.carb).clean + "г,", attributes: nil))
             
-            attString.append(NSAttributedString(string:  ", б: ", attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .bold), .foregroundColor: UIColor.systemBlue]))
-            attString.append(NSAttributedString(string: (model.count * selectedUnit.protein).clean + "г", attributes: nil))
+            attString.append(NSAttributedString(string:  " б: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+            attString.append(NSAttributedString(string: (model.count * selectedUnit.protein).clean + "г,", attributes: nil))
             
-            attString.append(NSAttributedString(string:  ", ж: ", attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .bold), .foregroundColor: UIColor.systemBlue]))
-            attString.append(NSAttributedString(string: (model.count * selectedUnit.fat).clean + "г", attributes: nil))
+            attString.append(NSAttributedString(string:  " ж: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+            attString.append(NSAttributedString(string: (model.count * selectedUnit.fat).clean + "г,", attributes: nil))
             
-            attString.append(NSAttributedString(string: ", ккал: ", attributes: [.font: UIFont.systemFont(ofSize: 17, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+            attString.append(NSAttributedString(string: " ккал: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
             attString.append(NSAttributedString(string: (model.count * selectedUnit.cal).clean , attributes: nil))
             
             unitsLabel.attributedText = attString
             
-            if let index = model.food.units?.index(of: selectedUnit) {
+            if let index = model.food.units?.index(of: selectedUnit),
+                index != pickerView.selectedRow(inComponent: 0) {
                 pickerView.selectRow(index, inComponent: 0, animated: false)
+            }
+        }
+        
+        if updateLayout {
+            self.delegate?.updateFoodEntrys()
+            UIView.animate(withDuration: 0.2) {
+                self.mainStack.layoutIfNeeded()
+                self.layoutDelegate?.didUpdateLayout()
             }
         }
     }
@@ -202,28 +277,37 @@ class FoodEntryCell: TableCell {
         case .full:
             UIView.animate(withDuration: 0.2) {
                 self.detailStack.isHidden = true
-                self.mainStackStack.layoutSubviews()
-                self.layoutDelegate?.didUpdateLayout()
+                self.mainStackDelete.layoutIfNeeded()
             } completion: { _ in
                 UIView.animate(withDuration: 0.2) {
                     self.editStack.isHidden = false
-                    self.mainStackStack.layoutSubviews()
+                    self.deleteButton.isHidden = false
+                    self.arrowImageView.transform = CGAffineTransform(rotationAngle: .pi)
+                    self.mainStackDelete.layoutIfNeeded()
                     self.layoutDelegate?.didUpdateLayout()
                 }
             }
         case .short:
             UIView.animate(withDuration: 0.2) {
                 self.editStack.isHidden = true
-                self.mainStackStack.layoutSubviews()
-                self.layoutDelegate?.didUpdateLayout()
+                self.deleteButton.isHidden = true
+                self.mainStackDelete.layoutIfNeeded()
             } completion: { _ in
                 UIView.animate(withDuration: 0.2) {
                     self.detailStack.isHidden = false
-                    self.mainStackStack.layoutSubviews()
+                    self.arrowImageView.transform = .identity
+                    self.mainStack.layoutIfNeeded()
                     self.layoutDelegate?.didUpdateLayout()
                 }
             }
         }
+    }
+    
+    
+    @objc
+    private func deleteModel() {
+        guard let model = model as? FoodEntryCellModel else { return }
+        self.delegate?.deleteCell(model: model)
     }
     
     
@@ -245,9 +329,9 @@ extension FoodEntryCell: UITextFieldDelegate {
 extension FoodEntryCell: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         guard let model = model as? FoodEntryCellModel else { return UIView() }
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: pickerView.frame.width - 30, height: 90))
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: pickerView.frame.width - 50, height: 90))
         label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
+        label.numberOfLines = 4
         label.text = (model.food.units?[row] as? UnitCoreData)?.name
         label.sizeToFit()
         return label

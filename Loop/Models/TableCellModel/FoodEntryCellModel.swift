@@ -10,8 +10,8 @@ import Foundation
 
 class FoodEntryCellModel: TableCellModel {
     
-    open var cellIdentifier: String {
-        FoodEntryCell.identifier
+    override var cellIdentifier: String {
+        FoodEntryCell.className
     }
     
     enum ShowMode {

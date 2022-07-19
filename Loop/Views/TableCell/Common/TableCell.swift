@@ -42,6 +42,7 @@ class TableCell: UITableViewCell, TableCellRepresentable {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         backgroundColor = .clear
+        contentView.backgroundColor = .clear
     }
 
     // MARK: Setup functions

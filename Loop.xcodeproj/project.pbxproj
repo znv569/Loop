@@ -285,6 +285,15 @@
 		8477FE632885F6FE000EE161 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8477FE622885F6FE000EE161 /* SnapKit */; };
 		8477FE652885F738000EE161 /* FoodEntryCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE642885F738000EE161 /* FoodEntryCellModel.swift */; };
 		8477FE672885F8FC000EE161 /* FoodEntryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE662885F8FC000EE161 /* FoodEntryCell.swift */; };
+		8477FE6928868C4A000EE161 /* TableSectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE6828868C4A000EE161 /* TableSectionModel.swift */; };
+		8477FE6B28868C6F000EE161 /* TableHeaderFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE6A28868C6F000EE161 /* TableHeaderFooterView.swift */; };
+		8477FE6E28869AD3000EE161 /* ContainerCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE6D28869AD3000EE161 /* ContainerCoreData.swift */; };
+		8477FE702886AD41000EE161 /* LableCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE6F2886AD41000EE161 /* LableCellModel.swift */; };
+		8477FE722886AD92000EE161 /* LableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE712886AD92000EE161 /* LableCell.swift */; };
+		8477FE742886ADFB000EE161 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE732886ADFB000EE161 /* String.swift */; };
+		8477FE762886AE50000EE161 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE752886AE50000EE161 /* UIColor.swift */; };
+		8477FE782886FCB8000EE161 /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE772886FCB8000EE161 /* ButtonCell.swift */; };
+		8477FE7A2886FCE9000EE161 /* ButtonCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE792886FCE9000EE161 /* ButtonCellModel.swift */; };
 		891B508524342BE1005DA578 /* CarbAndBolusFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */; };
 		892A5D59222F0A27008961AB /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892A5D58222F0A27008961AB /* Debug.swift */; };
 		892A5D692230C41D008961AB /* RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892A5D682230C41D008961AB /* RangeReplaceableCollection.swift */; };
@@ -1244,6 +1253,15 @@
 		8477FE5F2885F6C4000EE161 /* TableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCell.swift; sourceTree = "<group>"; };
 		8477FE642885F738000EE161 /* FoodEntryCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEntryCellModel.swift; sourceTree = "<group>"; };
 		8477FE662885F8FC000EE161 /* FoodEntryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodEntryCell.swift; sourceTree = "<group>"; };
+		8477FE6828868C4A000EE161 /* TableSectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableSectionModel.swift; sourceTree = "<group>"; };
+		8477FE6A28868C6F000EE161 /* TableHeaderFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableHeaderFooterView.swift; sourceTree = "<group>"; };
+		8477FE6D28869AD3000EE161 /* ContainerCoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerCoreData.swift; sourceTree = "<group>"; };
+		8477FE6F2886AD41000EE161 /* LableCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LableCellModel.swift; sourceTree = "<group>"; };
+		8477FE712886AD92000EE161 /* LableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LableCell.swift; sourceTree = "<group>"; };
+		8477FE732886ADFB000EE161 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		8477FE752886AE50000EE161 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		8477FE772886FCB8000EE161 /* ButtonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonCell.swift; sourceTree = "<group>"; };
+		8477FE792886FCE9000EE161 /* ButtonCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonCellModel.swift; sourceTree = "<group>"; };
 		891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarbAndBolusFlowViewModel.swift; sourceTree = "<group>"; };
 		892A5D29222EF60A008961AB /* MockKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = MockKit.framework; path = Carthage/Build/iOS/MockKit.framework; sourceTree = SOURCE_ROOT; };
 		892A5D2B222EF60A008961AB /* MockKitUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = MockKitUI.framework; path = Carthage/Build/iOS/MockKitUI.framework; sourceTree = SOURCE_ROOT; };
@@ -2365,6 +2383,8 @@
 				4374B5F3209D89A900D17AA8 /* TextFieldTableViewCell.swift */,
 				43BFF0C31E4659E700FF19A9 /* UIColor+HIG.swift */,
 				E9B08015253BBD7300BAD8F8 /* UserDefaults+LoopIntents.swift */,
+				8477FE732886ADFB000EE161 /* String.swift */,
+				8477FE752886AE50000EE161 /* UIColor.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2381,6 +2401,7 @@
 			isa = PBXGroup;
 			children = (
 				8477FE582885F23E000EE161 /* Food.xcdatamodeld */,
+				8477FE6D28869AD3000EE161 /* ContainerCoreData.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -2388,8 +2409,11 @@
 		8477FE5B2885F591000EE161 /* TableCellModel */ = {
 			isa = PBXGroup;
 			children = (
+				8477FE6828868C4A000EE161 /* TableSectionModel.swift */,
 				8477FE5C2885F5A2000EE161 /* TableCellModel.swift */,
 				8477FE642885F738000EE161 /* FoodEntryCellModel.swift */,
+				8477FE6F2886AD41000EE161 /* LableCellModel.swift */,
+				8477FE792886FCE9000EE161 /* ButtonCellModel.swift */,
 			);
 			path = TableCellModel;
 			sourceTree = "<group>";
@@ -2397,10 +2421,21 @@
 		8477FE5E2885F6B9000EE161 /* TableCell */ = {
 			isa = PBXGroup;
 			children = (
-				8477FE5F2885F6C4000EE161 /* TableCell.swift */,
+				8477FE6C28868C83000EE161 /* Common */,
+				8477FE772886FCB8000EE161 /* ButtonCell.swift */,
 				8477FE662885F8FC000EE161 /* FoodEntryCell.swift */,
+				8477FE712886AD92000EE161 /* LableCell.swift */,
 			);
 			path = TableCell;
+			sourceTree = "<group>";
+		};
+		8477FE6C28868C83000EE161 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				8477FE5F2885F6C4000EE161 /* TableCell.swift */,
+				8477FE6A28868C6F000EE161 /* TableHeaderFooterView.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		891B508324342BCA005DA578 /* View Models */ = {
@@ -3450,8 +3485,10 @@
 				A9B996F227238705002DC09C /* DosingDecisionStore.swift in Sources */,
 				43C513191E864C4E001547C7 /* GlucoseRangeSchedule.swift in Sources */,
 				43A51E1F1EB6D62A000736CC /* CarbAbsorptionViewController.swift in Sources */,
+				8477FE6B28868C6F000EE161 /* TableHeaderFooterView.swift in Sources */,
 				43776F901B8022E90074EA36 /* AppDelegate.swift in Sources */,
 				4372E48B213CB5F00068E043 /* Double.swift in Sources */,
+				8477FE722886AD92000EE161 /* LableCell.swift in Sources */,
 				430B29932041F5B300BA9F93 /* UserDefaults+Loop.swift in Sources */,
 				43CE7CDE1CA8B63E003CC1B0 /* Data.swift in Sources */,
 				E9BB27AB23B85C3500FB4987 /* SleepStore.swift in Sources */,
@@ -3498,10 +3535,12 @@
 				C191D2A125B3ACAA00C26C0B /* DosingStrategySelectionView.swift in Sources */,
 				43DBF0591C93F73800B3C386 /* CarbEntryTableViewController.swift in Sources */,
 				A977A2F424ACFECF0059C207 /* CriticalEventLogExportManager.swift in Sources */,
+				8477FE7A2886FCE9000EE161 /* ButtonCellModel.swift in Sources */,
 				89CA2B32226C18B8004D9350 /* TestingScenariosTableViewController.swift in Sources */,
 				43E93FB71E469A5100EAB8DB /* HKUnit.swift in Sources */,
 				43C05CAF21EB2C24006FB252 /* NSBundle.swift in Sources */,
 				A91D2A3F26CF0FF80023B075 /* IconTitleSubtitleTableViewCell.swift in Sources */,
+				8477FE782886FCB8000EE161 /* ButtonCell.swift in Sources */,
 				A967D94C24F99B9300CDDF8A /* OutputStream.swift in Sources */,
 				8477FE672885F8FC000EE161 /* FoodEntryCell.swift in Sources */,
 				1DB1065124467E18005542BD /* AlertManager.swift in Sources */,
@@ -3513,6 +3552,7 @@
 				439BED2A1E76093C00B0AED5 /* CGMManager.swift in Sources */,
 				C16B983E26B4893300256B05 /* DoseEnactor.swift in Sources */,
 				E98A55EF24EDD6E60008715D /* DosingDecisionStoreProtocol.swift in Sources */,
+				8477FE742886ADFB000EE161 /* String.swift in Sources */,
 				C165B8CE23302C5D0004112E /* RemoteCommand.swift in Sources */,
 				E9C00EF524C623EF00628F35 /* LoopSettings+Loop.swift in Sources */,
 				4389916B1E91B689000EEF90 /* ChartSettings+Loop.swift in Sources */,
@@ -3534,6 +3574,7 @@
 				E95D380124EADE7C005E2F50 /* DoseStoreProtocol.swift in Sources */,
 				43D381621EBD9759007F8C8F /* HeaderValuesTableViewCell.swift in Sources */,
 				C13DA2B024F6C7690098BB29 /* UIViewController.swift in Sources */,
+				8477FE6E28869AD3000EE161 /* ContainerCoreData.swift in Sources */,
 				A9C62D892331703100535612 /* LoggingServicesManager.swift in Sources */,
 				89E267FF229267DF00A3F2AF /* Optional.swift in Sources */,
 				43785E982120E7060057DED1 /* Intents.intentdefinition in Sources */,
@@ -3552,6 +3593,7 @@
 				4F08DE8F1E7BB871006741EA /* CollectionType+Loop.swift in Sources */,
 				A9F703772489D8AA00C98AD8 /* PersistentDeviceLog+SimulatedCoreData.swift in Sources */,
 				E9B080B1253BDA6300BAD8F8 /* UserDefaults+LoopIntents.swift in Sources */,
+				8477FE762886AE50000EE161 /* UIColor.swift in Sources */,
 				C148CEE724FD91BD00711B3B /* DeliveryUncertaintyAlertManager.swift in Sources */,
 				1D12D3B92548EFDD00B53E8B /* main.swift in Sources */,
 				435400341C9F878D00D5819C /* SetBolusUserInfo.swift in Sources */,
@@ -3579,6 +3621,7 @@
 				C174233C259BEB0F00399C9D /* ManualEntryDoseViewModel.swift in Sources */,
 				89CA2B3D226E6B13004D9350 /* LocalTestingScenariosManager.swift in Sources */,
 				43F78D261C8FC000002152D1 /* DoseMath.swift in Sources */,
+				8477FE6928868C4A000EE161 /* TableSectionModel.swift in Sources */,
 				43511CE221FD80E400566C63 /* RetrospectiveCorrection.swift in Sources */,
 				1D05219B2469E9DF000EBBDE /* StoredAlert.swift in Sources */,
 				E9B0802B253BBDFF00BAD8F8 /* IntentExtensionInfo.swift in Sources */,
@@ -3600,6 +3643,7 @@
 				439706E622D2E84900C81566 /* PredictionSettingTableViewCell.swift in Sources */,
 				430D85891F44037000AF2D4F /* HUDViewTableViewCell.swift in Sources */,
 				43A51E211EB6DBDD000736CC /* LoopChartsTableViewController.swift in Sources */,
+				8477FE702886AD41000EE161 /* LableCellModel.swift in Sources */,
 				8968B1122408B3520074BB48 /* UIFont.swift in Sources */,
 				438D42FB1D7D11A4003244B0 /* PredictionInputEffectTableViewCell.swift in Sources */,
 				89A1B66E24ABFDF800117AC2 /* SupportedBolusVolumesUserInfo.swift in Sources */,
@@ -4627,7 +4671,7 @@
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Loop/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4652,7 +4696,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(LOOP_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Loop/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4674,7 +4718,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WatchApp Extension/WatchApp Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4701,7 +4745,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WatchApp Extension/WatchApp Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4728,7 +4772,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "$(APPICON_NAME)";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
@@ -4752,7 +4796,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "$(APPICON_NAME)";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
@@ -4826,7 +4870,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = Learn/Learn.entitlements;
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Learn/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4845,7 +4889,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = Learn/Learn.entitlements;
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Learn/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4972,7 +5016,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Status Extension/Loop Status Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Loop Status Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4994,7 +5038,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Status Extension/Loop Status Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Loop Status Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -5056,7 +5100,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Intent Extension/Loop Intent Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Loop Intent Extension/Info.plist";
@@ -5079,7 +5123,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Intent Extension/Loop Intent Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Loop Intent Extension/Info.plist";

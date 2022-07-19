@@ -34,6 +34,32 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     }
 
     var maxQuantity = HKQuantity(unit: .gram(), doubleValue: 250)
+    var foods: [FoodEntryCellModel] = []
+    private let foodSummaryModel = LableCellModel(font: .systemFont(ofSize: 16, weight: .regular),
+                                          textColor: .white,
+                                          numberOfLines: 0,
+                                          insets: UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10),
+                                          alignment: .center )
+    
+    private lazy var addFoodModel: ButtonCellModel = {
+        let model = ButtonCellModel(font: .systemFont(ofSize: 16, weight: .regular), textColor: .white, backgroundButtonColor: .systemBlue, backgroundContentView: UIColor.cellBackgroundColor, insets: .zero, corner: 6, tintColor: nil, height: 60)
+        model.text = "🥦🍔 Сhoose a product"
+        model.action = { [weak self] in
+            self?.addProductController()
+        }
+        return model
+    }()
+    
+    var foodSection: TableSectionModel {
+        let section = TableSectionModel()
+        section.items.append(contentsOf: foods)
+        if foods.count > 0 {
+            section.items.append(foodSummaryModel)
+        }
+        section.items.append(addFoodModel)
+        return section
+    }
+   
 
     /// Entry configuration values. Must be set before presenting.
     var absorptionTimePickerInterval = TimeInterval(minutes: 30)
@@ -166,6 +192,9 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
         tableView.estimatedRowHeight = 44
         tableView.register(DateAndDurationTableViewCell.nib(), forCellReuseIdentifier: DateAndDurationTableViewCell.className)
         tableView.register(DateAndDurationSteppableTableViewCell.nib(), forCellReuseIdentifier: DateAndDurationSteppableTableViewCell.className)
+        tableView.register(FoodEntryCell.self, forCellReuseIdentifier: FoodEntryCell.className)
+        tableView.register(LabelCell.self, forCellReuseIdentifier: LabelCell.className)
+        tableView.register(ButtonCell.self, forCellReuseIdentifier: ButtonCell.className)
 
         if originalCarbEntry != nil {
             title = NSLocalizedString("carb-entry-title-edit", value: "Edit Carb Entry", comment: "The title of the view controller to edit an existing carb entry")
@@ -178,6 +207,33 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
 
         // Sets text for back button on bolus screen
         navigationItem.backBarButtonItem = UIBarButtonItem(title: NSLocalizedString("Carb Entry", comment: "Back button text for bolus screen to return to carb entry screen"), style: .plain, target: nil, action: nil)
+    }
+    
+    private func mock() -> FoodCoreData {
+        let context = ContainerCoreData.shared.mainContext
+        let unit = UnitCoreData(context: context)
+        unit.carb = 0.2
+        unit.protein = 0.2
+        unit.fat = 0.1
+        unit.cal = 30
+        unit.name = "мл"
+        
+        let unit2 = UnitCoreData(context: context)
+        unit2.carb = 35
+        unit2.protein = 0.2
+        unit2.fat = 0.0
+        unit2.cal = 600
+        unit2.name = "бутылка, объема 0.33л"
+        
+        let brand = BrandFoodCoreData(context: context)
+        brand.name = "Мираторг"
+        
+        let food = FoodCoreData(context: context )
+        food.name = "Сладкий бубалех"
+        food.brand = brand
+        food.units = NSOrderedSet(array: [unit, unit2])
+        
+        return food
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -258,6 +314,7 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     // MARK: - Table view data source
     fileprivate enum Sections: Int, CaseIterable {
         case warning
+        case food
         case details
         
         static func indexForDetailsSection(displayWarningSection: Bool) -> Int {
@@ -283,6 +340,10 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
         static func footer(for section: Int, displayWarningSection: Bool) -> String? {
             if section == Sections.warning.rawValue && displayWarningSection {
                 return nil
+            }
+            
+            if (displayWarningSection ? section : section + 1) == Sections.food.rawValue {
+                return NSLocalizedString("Food of your choice! You can add more!", comment: "")
             }
                     
             return NSLocalizedString("Choose a longer absorption time for larger meals, or those containing fats and proteins. This is only guidance to the algorithm and need not be exact.", comment: "Carb entry section footer text explaining absorption time")
@@ -313,6 +374,10 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let realSection = shouldDisplayAccurateCarbEntryWarning ? section : section + 1
+        if realSection == Sections.food.rawValue {
+            return foodSection.items.count
+        }
         return Sections.numberOfRows(for: section, displayWarningSection: shouldDisplayAccurateCarbEntryWarning)
     }
 
@@ -411,6 +476,17 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
                 
                 return cell
             }
+        case .food:
+            let model = foodSection.items[indexPath.item]
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: model.cellIdentifier) as? TableCell else { return UITableViewCell() }
+            cell.model = model
+            cell.contentView.backgroundColor = .cellBackgroundColor
+            cell.layoutDelegate = self
+            if let cell = cell as? FoodEntryCell {
+                cell.delegate = self
+            }
+            return cell
+            
         }
     }
 
@@ -460,8 +536,33 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
             usesCustomFoodType = true
             shouldBeginEditingFoodType = true
             tableView.reloadRows(at: [IndexPath(row: DetailsRow.foodType.rawValue, section: Sections.indexForDetailsSection(displayWarningSection: shouldDisplayAccurateCarbEntryWarning))], with: .none)
+        case is TableCell:
+            if let cell = tableView.cellForRow(at: indexPath) as? TableCell{
+                  if let model = cell.model as? FoodEntryCellModel {
+                    model.mode = model.mode == .full ? .short : .full
+                    
+                      foods.forEach { modelAr in
+                          if modelAr !== model {
+                              modelAr.mode = .short
+                          }
+                      }
+                      
+                    if model.mode == .full {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                model.startEditing?()
+                            }
+                        }
+                    }
+                }
+            }
         default:
             break
+        }
+        
+        if !(tableView.cellForRow(at: indexPath) is FoodEntryCell) {
+            foods.forEach({ $0.mode = .short })
         }
 
         tableView.endUpdates()
@@ -539,6 +640,32 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
         
         footerView.primaryButton.isEnabled = readyToContinue
         navigationItem.rightBarButtonItem?.isEnabled = readyToContinue
+    }
+    
+    private func addProductController() {
+        addProduct(modelCore: mock())
+    }
+    
+    private func addProduct(modelCore: FoodCoreData) {
+        var indexes = [IndexPath]()
+        let model = FoodEntryCellModel(food: modelCore, mode: .full)
+        foods.forEach({ $0.mode = .short })
+        foods.append(model)
+        let section = shouldDisplayAccurateCarbEntryWarning ? Sections.food.rawValue : Sections.food.rawValue - 1
+        let count = foods.count
+        let indexPast = IndexPath(row: count - 1, section: section)
+        indexes.append(indexPast)
+        if foods.count == 1 {
+            indexes.append(IndexPath(row: count, section: section))
+        }
+        tableView.insertRows(at: indexes, with: .left)
+        updateFoodEntrys()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.tableView.scrollToRow(at: indexPast, at: .top, animated: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                model.startEditing?()
+            }
+        }
     }
 }
 
@@ -646,6 +773,79 @@ extension CarbEntryViewController: EmojiInputControllerDelegate {
                 cell.duration = orderedAbsorptionTimes[section]
             }
         }
+    }
+}
+
+extension CarbEntryViewController: TableCellLayoutDelegate {
+    func didUpdateLayout() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
+    }
+}
+
+extension CarbEntryViewController: FoodEntryCellDelegate {
+    func deleteCell(model: FoodEntryCellModel) {
+        let alert = UIAlertController(title: "Would you like to delete \(model.food.name ?? "")?", message: nil, preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [weak self] _ in
+            guard let index = self?.foods.firstIndex(of: model) as? Int else { return }
+            self?.foods.remove(at: index)
+            
+            if let shouldDisplayAccurateCarbEntryWarning = self?.shouldDisplayAccurateCarbEntryWarning {
+                let section = shouldDisplayAccurateCarbEntryWarning ? Sections.food.rawValue : Sections.food.rawValue - 1
+                var indexes: [IndexPath]  = [IndexPath(row: index, section: section)]
+                if self?.foods.count == 0 {
+                    indexes.append(IndexPath(row: index + 1, section: section))
+                }
+                self?.tableView.deleteRows(at: indexes, with: .left)
+               
+                self?.updateFoodEntrys()
+            }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "NO", style: .default, handler: nil))
+        present(alert, animated: true)
+    }
+    
+    
+    func updateFoodEntrys() {
+        var carb = 0.0
+        var fat = 0.0
+        var protein = 0.0
+        var cal = 0.0
+        
+        foods.forEach { food in
+            guard let unit =  food.selectedUnit else { return }
+            carb += food.count * unit.carb
+            fat += food.count * unit.fat
+            protein += food.count * unit.protein
+            cal += food.count * unit.cal
+        }
+        
+        let attrString = NSMutableAttributedString(string: "Суммарно: \n",
+                                                   attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue])
+        attrString.append(NSMutableAttributedString(string: "уг: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSAttributedString(string: carb.clean + "г,", attributes: nil))
+        
+        attrString.append(NSAttributedString(string:  " б: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSAttributedString(string: protein.clean + "г,", attributes: nil))
+        
+        attrString.append(NSAttributedString(string:  " ж: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSAttributedString(string: fat.clean + "г,", attributes: nil))
+        
+        attrString.append(NSAttributedString(string: " ккал: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSAttributedString(string: cal.clean , attributes: nil))
+        
+        foodSummaryModel.attributedString = attrString
+        quantity = HKQuantity(unit: preferredCarbUnit, doubleValue: carb)
+        
+        if carb != 0 {
+            let section = Sections.indexForDetailsSection(displayWarningSection: shouldDisplayAccurateCarbEntryWarning)
+            let row = DetailsRow.value.rawValue
+            let indexPath = IndexPath(row: row, section: section)
+            tableView.reloadRows(at: [indexPath], with: .none)
+        }
+       
     }
 }
 

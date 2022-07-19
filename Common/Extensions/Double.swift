@@ -34,14 +34,10 @@ extension Double {
     }
     
     var clean: String {
-        if self.truncatingRemainder(dividingBy: 1) == 0 {
-            return  String(format: "%.0f", self)
-        }
-        
-        if self.truncatingRemainder(dividingBy: 1) == 1 {
-            return  String(format: "%.1f", self)
-        }
-        
-        return  String(format: "%.2f", self)
+        let formatter = NumberFormatter()
+        let number = NSNumber(value: self)
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 4
+        return String(formatter.string(from: number) ?? "").replacingOccurrences(of: ",", with: ".")
     }
 }
