@@ -42,8 +42,8 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
                                           alignment: .center )
     
     private lazy var addFoodModel: ButtonCellModel = {
-        let model = ButtonCellModel(font: .systemFont(ofSize: 16, weight: .regular), textColor: .white, backgroundButtonColor: .systemBlue, backgroundContentView: UIColor.cellBackgroundColor, insets: .zero, corner: 6, tintColor: nil, height: 60)
-        model.text = "🥦🍔 Сhoose a product"
+        let model = ButtonCellModel(font: .systemFont(ofSize: 19, weight: .regular), textColor: .white, backgroundButtonColor: .systemBlue, backgroundContentView: UIColor.cellBackgroundColor, insets: .zero, corner: 6, tintColor: nil, height: 50)
+        model.text = "🥦🍔 Add a product"
         model.action = { [weak self] in
             self?.addProductController()
         }
@@ -643,7 +643,26 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     }
     
     private func addProductController() {
-        addProduct(modelCore: mock())
+//        FoodManagerCoreData.shared.countData()
+//        BrandMangerCoreData.shared.findBrands(brand: "Магнит") { brands in
+//
+//            FoodManagerCoreData.shared.findProduct(name: "Виноград") { models in
+//                DispatchQueue.main.async {
+//                    self.addProduct(modelCore: models.first!)
+//                }
+//                models.forEach({ model in
+//
+//                    print("\(model.objectID) \(model.name) \(model.brand?.name ?? "") \(model.brand?.id)  \(model.brand?.objectID)")
+//                })
+//            }
+//        }
+        
+        let vc = FoodSearchViewController()
+        vc.modalPresentationStyle = .popover
+        vc.delegate = self
+        
+        show(vc, sender: footerView.primaryButton)
+       
     }
     
     private func addProduct(modelCore: FoodCoreData) {
@@ -846,6 +865,13 @@ extension CarbEntryViewController: FoodEntryCellDelegate {
             tableView.reloadRows(at: [indexPath], with: .none)
         }
        
+    }
+}
+
+
+extension CarbEntryViewController: FoodSearchViewControllerDelegate {
+    func selectFood(product: FoodCoreData) {
+        addProduct(modelCore: product)
     }
 }
 

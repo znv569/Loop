@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import JGProgressHUD
 
 extension UIViewController {
     var topmostViewController: UIViewController {
@@ -23,5 +24,30 @@ extension UIViewController {
     /// Argumentless wrapper around `dismiss(animated:)` in order to pass as a selector
     @objc func dismissWithAnimation() {
         dismiss(animated: true)
+    }
+    
+    static let hud = JGProgressHUD(style: .dark)
+    func hideKeyboardOnTap(_ selector: Selector, viewTap: UIView? = nil) {
+        
+           let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: selector)
+           tap.cancelsTouchesInView = false
+        
+        if let viewTap = viewTap {
+           viewTap.addGestureRecognizer(tap)
+        }else{
+            view.addGestureRecognizer(tap)
+        }
+    }
+
+    func showLoader(_ show: Bool) {
+        if show {
+            UIViewController.hud.show(in: view)
+        } else {
+            UIViewController.hud.dismiss()
+        }
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

@@ -122,7 +122,11 @@ class FoodEntryCell: TableCell {
         stack.spacing = 8
         let container = UIView()
         container.addSubview(countTextField)
-         [pickerView, container].forEach { stack.addArrangedSubview($0) }
+        let containerPicker = UIView()
+        containerPicker.layer.masksToBounds = true
+        containerPicker.addSubview(pickerView)
+        
+         [containerPicker, container].forEach { stack.addArrangedSubview($0) }
          return stack
      }()
     
@@ -183,7 +187,7 @@ class FoodEntryCell: TableCell {
         }
         
         countTextField.snp.makeConstraints {
-            $0.width.equalTo(80)
+            $0.width.equalTo(50)
             $0.centerY.leading.trailing.equalToSuperview()
         }
         arrowImageView.snp.makeConstraints {
@@ -192,6 +196,12 @@ class FoodEntryCell: TableCell {
         }
         deleteButton.snp.makeConstraints {
             $0.width.equalTo(50)
+        }
+        pickerView.snp.makeConstraints {
+            $0.leading.centerY.trailing.equalToSuperview()
+        }
+        pickerView.superview?.snp.makeConstraints {
+            $0.height.equalTo(150)
         }
         contentView.backgroundColor = .cellBackgroundColor
     }
@@ -283,6 +293,10 @@ class FoodEntryCell: TableCell {
                     self.editStack.isHidden = false
                     self.deleteButton.isHidden = false
                     self.arrowImageView.transform = CGAffineTransform(rotationAngle: .pi)
+                    self.mainStack.snp.updateConstraints {
+                        $0.trailing.leading.equalToSuperview().inset(3)
+                    }
+                    self.mainStack.layoutIfNeeded()
                     self.mainStackDelete.layoutIfNeeded()
                     self.layoutDelegate?.didUpdateLayout()
                 }
@@ -296,7 +310,11 @@ class FoodEntryCell: TableCell {
                 UIView.animate(withDuration: 0.2) {
                     self.detailStack.isHidden = false
                     self.arrowImageView.transform = .identity
+                    self.mainStack.snp.updateConstraints {
+                        $0.trailing.leading.equalToSuperview().inset(20)
+                    }
                     self.mainStack.layoutIfNeeded()
+                    self.mainStackDelete.layoutIfNeeded()
                     self.layoutDelegate?.didUpdateLayout()
                 }
             }
@@ -329,7 +347,7 @@ extension FoodEntryCell: UITextFieldDelegate {
 extension FoodEntryCell: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
         guard let model = model as? FoodEntryCellModel else { return UIView() }
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: pickerView.frame.width - 50, height: 90))
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: pickerView.frame.width - 10, height: 90))
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 4
         label.text = (model.food.units?[row] as? UnitCoreData)?.name

@@ -11,6 +11,8 @@ import LoopKitUI
 import MockKit
 import SwiftUI
 import HealthKit
+import MobileCoreServices
+
 
 public struct SettingsView: View {
     @EnvironmentObject private var displayGlucoseUnitObservable: DisplayGlucoseUnitObservable
@@ -30,6 +32,10 @@ public struct SettingsView: View {
     @State private var therapySettingsIsPresented: Bool = false
     @State private var deletePumpDataAlertIsPresented = false
     @State private var deleteCGMDataAlertIsPresented = false
+    
+    @State private var document: InputDoument = InputDoument(input: "")
+    @State private var isImporting: Bool = false
+    @State var progressValue: Float = 0.0
 
     public init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
@@ -58,10 +64,42 @@ public struct SettingsView: View {
                     servicesSection
                 }
                 supportSection
+                
+                updateProductSection
             }
             .insetGroupedListStyle()
             .navigationBarTitle(Text(NSLocalizedString("Settings", comment: "Settings screen title")))
             .navigationBarItems(trailing: dismissButton)
+            .fileImporter(
+                        isPresented: $isImporting,
+                        allowedContentTypes: [.json],
+                        allowsMultipleSelection: false
+                    ) { result in
+                        do {
+                            guard let selectedFile: URL = try result.get().first else { return }
+                            if selectedFile.startAccessingSecurityScopedResource() {
+                                let data = try Data(contentsOf: selectedFile)
+                                defer { selectedFile.stopAccessingSecurityScopedResource() }
+                                
+                                let decoder = JSONDecoder()
+                                do {
+                                    let models = try decoder.decode([FoodProduct].self, from: data)
+                                    FoodManagerCoreData.shared.deleteAllData()
+                                    FoodManagerCoreData.shared.addData(models: models) { progress in
+                                        progressValue = Float(progress)
+                                    }
+                                } catch {
+                                    print(error.localizedDescription)
+                                }
+                            } else {
+                                // Handle denied access
+                            }
+                        } catch {
+                            // Handle failure.
+                            print("Unable to read file contents")
+                            print(error.localizedDescription)
+                        }
+                    }
         }
     }
     
@@ -313,6 +351,26 @@ extension SettingsView {
             }
         }
     }
+    
+    
+    private var updateProductSection: some View {
+       Section(header: SectionHeader(label: NSLocalizedString("Update product base", comment: "The title of the support section in settings"))) {
+           VStack {
+                Button(action: {
+                    isImporting = true
+                }, label: {
+                    Text(NSLocalizedString("Select json file", comment: "The title of the support item in settings"))
+                        .foregroundColor(Color(UIColor.white))
+                })
+               
+               if progressValue > 0 && progressValue != 1 {
+                   ProgressBar(value: $progressValue).frame(height: 20)
+                   Text("Please wait")
+               }
+           }
+       }
+    }
+    
 
     private var plusImage: some View {
         Image(systemName: "plus.circle")
