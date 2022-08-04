@@ -20,6 +20,7 @@ class SearchTableViewController: UIViewController {
         textField.textColor = .white
         textField.placeholder = "Input prodct name"
         textField.font = .systemFont(ofSize: 19, weight: .regular)
+        textField.addTarget(self, action: #selector(textChange), for: [.editingChanged, .valueChanged])
         return textField
     }()
     
@@ -29,6 +30,16 @@ class SearchTableViewController: UIViewController {
         table.delegate = self
         table.dataSource = self
         return table
+    }()
+    
+    lazy var clearButton: UIButton = {
+       let button = UIButton()
+        button.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
+        button.addTarget(self, action: #selector(tapDelete), for: .touchUpInside)
+        button.isHidden = true
+        button.tintColor = .white
+        button.contentMode = .center
+        return button
     }()
     
     var lastOffset: CGFloat = 0
@@ -106,6 +117,7 @@ class SearchTableViewController: UIViewController {
         container.layer.borderWidth = 1
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapContainer))
         container.addGestureRecognizer(tap)
+        container.addSubview(clearButton)
         
         view.addSubview(container)
         
@@ -121,11 +133,26 @@ class SearchTableViewController: UIViewController {
         }
         
         tableView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview().inset(3)
             $0.bottom.equalToSuperview().inset(15)
             $0.top.equalTo(container.snp.bottom).offset(10)
         }
+        clearButton.snp.makeConstraints {
+            $0.trailing.top.bottom.equalToSuperview()
+            $0.width.equalTo(40)
+        }
         
+    }
+    
+    @objc
+    private func textChange() {
+        clearButton.isHidden = (textField.text?.count ?? 0) == 0
+    }
+    
+    @objc
+    private func tapDelete() {
+        textField.text = nil
+        clearButton.isHidden = (textField.text?.count ?? 0) == 0
     }
     
 }

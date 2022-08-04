@@ -118,7 +118,7 @@ class FoodSearchViewController: SearchTableViewController {
     @objc
     private func changeSearchText() {
         self.searchTimer?.invalidate()
-        guard let searchText = textField.text else { return }
+        let searchText = textField.text ?? ""
         searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { [weak self] (timer) in
             DispatchQueue.main.async {
                 self?.showLoader(true)
@@ -152,5 +152,7 @@ extension FoodSearchViewController {
 extension FoodSearchViewController: BrandSearchViewControllerDelegate {
     func selectBrand(brand: BrandFoodCoreData?) {
         self.selectedBrand = brand
+        self.textField.text = ""
+        self.changeSearchText()
     }
 }

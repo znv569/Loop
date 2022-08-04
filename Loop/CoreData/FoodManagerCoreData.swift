@@ -8,6 +8,9 @@
 
 import Foundation
 import CoreData
+import FuzzyKit
+import FuzzyLogic
+import FuzzyRelations
 
 extension NSString {
     @objc func countCompare(_ string: String) -> ComparisonResult {
@@ -60,38 +63,41 @@ class FoodManagerCoreData: MCoreData<FoodCoreData> {
         } catch {
         }
         print(results?.count)
+        
     }
     
     func findProduct(name: String, brand: BrandFoodCoreData? = nil, comleation: @escaping ([FoodCoreData]) -> Void) {
         let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        if name == "" {
+        if name == "" && brand == nil {
             comleation([])
             return
         }
         var predicates = [NSPredicate]()
         
-        let names = name.lowercased().components(separatedBy: " ")
+        var sendPredicates: [NSPredicate] = []
         
-        for name in names {
-            let predicate1 = NSPredicate(format: #keyPath(FoodCoreData.tags) + " CONTAINS[cd] %@", name)
-            let predicate2 = NSPredicate(format: #keyPath(FoodCoreData.tags) + " BEGINSWITH[cd] %@", name)
-            let predicate3 = NSPredicate(format: #keyPath(FoodCoreData.tags) + " LIKE '%@'", name)
-            let predicate4 = NSPredicate(format: #keyPath(FoodCoreData.tags) + "== %@", name)
+        if name.count > 0 {
+            let names = name.lowercased().components(separatedBy: " ")
+            for name in names {
+                let predicate1 = NSPredicate(format: #keyPath(FoodCoreData.tags) + " CONTAINS[cd] %@", name)
+                let predicate2 = NSPredicate(format: #keyPath(FoodCoreData.tags) + " BEGINSWITH[cd] %@", name)
+                let predicate3 = NSPredicate(format: #keyPath(FoodCoreData.tags) + " LIKE '%@'", name)
+                let predicate4 = NSPredicate(format: #keyPath(FoodCoreData.tags) + "== %@", name)
+                let predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2, predicate3, predicate4])
+                predicates.append(predicate)
+            }
+            
+            let predicate1 = NSPredicate(format: #keyPath(FoodCoreData.name) + " CONTAINS[cd] %@", name)
+            let predicate2 = NSPredicate(format: #keyPath(FoodCoreData.name) + " BEGINSWITH[cd] %@", name)
+            let predicate3 = NSPredicate(format: #keyPath(FoodCoreData.name) + " LIKE '%@'", name)
+            let predicate4 = NSPredicate(format: #keyPath(FoodCoreData.name) + "== %@", name)
             let predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2, predicate3, predicate4])
-            predicates.append(predicate)
+            
+            
+            let mainPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+            let sendPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [mainPredicate, predicate])
+            sendPredicates.append(sendPredicate)
         }
-        
-        let predicate1 = NSPredicate(format: #keyPath(FoodCoreData.name) + " CONTAINS[cd] %@", name)
-        let predicate2 = NSPredicate(format: #keyPath(FoodCoreData.name) + " BEGINSWITH[cd] %@", name)
-        let predicate3 = NSPredicate(format: #keyPath(FoodCoreData.name) + " LIKE '%@'", name)
-        let predicate4 = NSPredicate(format: #keyPath(FoodCoreData.name) + "== %@", name)
-        let predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2, predicate3, predicate4])
-        
-        
-        let mainPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-        let sendPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [mainPredicate, predicate])
-        
-        var sendPredicates: [NSPredicate] = [sendPredicate]
         
         if let brand = brand {
             let predicateWithBrand = NSPredicate(format: #keyPath(FoodCoreData.brand) + "  == %@", brand)
@@ -101,12 +107,17 @@ class FoodManagerCoreData: MCoreData<FoodCoreData> {
         
         let predicateComWithBrand = NSCompoundPredicate(andPredicateWithSubpredicates: sendPredicates)
         
-        let sortDescriptor = NSSortDescriptor(key: #keyPath(FoodCoreData.count), ascending: true)
-        let sortDescriptorIndex = NSSortDescriptor(key: #keyPath(FoodCoreData.brand.index), ascending: true)
+        var sortDescriptionAr = [NSSortDescriptor]()
+        if name.count > 0 {
+            sortDescriptionAr.append(NSSortDescriptor(key: #keyPath(FoodCoreData.count), ascending: true))
+            sortDescriptionAr.append(NSSortDescriptor(key: #keyPath(FoodCoreData.brand.index), ascending: true))
+            sortDescriptionAr.append(NSSortDescriptor(key: #keyPath(FoodCoreData.brand.name), ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare)))
+        } else {
+            sortDescriptionAr.append(NSSortDescriptor(key: #keyPath(FoodCoreData.name), ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare)))
+        }
+
         
-        let sortDescriptorName = NSSortDescriptor(key: #keyPath(FoodCoreData.brand.name), ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare))
-        
-        getObjects(predicate: predicateComWithBrand, sort: [sortDescriptor, sortDescriptorIndex, sortDescriptorName], modePerform: .async) { models in
+        getObjects(predicate: predicateComWithBrand, sort: sortDescriptionAr, modePerform: .async) { models in
             comleation(models)
         }
     }

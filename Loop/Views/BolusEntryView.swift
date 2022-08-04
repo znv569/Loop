@@ -191,6 +191,12 @@ struct BolusEntryView: View {
                 } else {
                     recommendedBolusRow
                 }
+                
+                if let quntityProtein = viewModel.proteinCarbEntry?.quantity {
+                    Text("And \(quntityProtein.doubleValue(for: .gram()).clean)g of carbohydrates will also be added, 25% of the protein. After 1 hour to 4 hours.")
+                }
+                
+                
             }
             .padding(.top, 8)
             

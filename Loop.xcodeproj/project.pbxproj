@@ -305,6 +305,11 @@
 		8477FE9028880E61000EE161 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE8F28880E61000EE161 /* SearchTableViewController.swift */; };
 		8477FE9328882508000EE161 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 8477FE9228882508000EE161 /* JGProgressHUD */; };
 		8477FE9728883C95000EE161 /* BrandSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE9628883C95000EE161 /* BrandSearchViewController.swift */; };
+		84FD4A4E288AAFAF0041C4B4 /* FuzzyKit in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A4D288AAFAF0041C4B4 /* FuzzyKit */; };
+		84FD4A50288AAFAF0041C4B4 /* FuzzyLogic in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A4F288AAFAF0041C4B4 /* FuzzyLogic */; };
+		84FD4A52288AAFAF0041C4B4 /* FuzzyNumbers in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A51288AAFAF0041C4B4 /* FuzzyNumbers */; };
+		84FD4A54288AAFAF0041C4B4 /* FuzzyRelations in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A53288AAFAF0041C4B4 /* FuzzyRelations */; };
+		84FD4A56288AAFAF0041C4B4 /* FuzzySets in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A55288AAFAF0041C4B4 /* FuzzySets */; };
 		891B508524342BE1005DA578 /* CarbAndBolusFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */; };
 		892A5D59222F0A27008961AB /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892A5D58222F0A27008961AB /* Debug.swift */; };
 		892A5D692230C41D008961AB /* RangeReplaceableCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892A5D682230C41D008961AB /* RangeReplaceableCollection.swift */; };
@@ -1601,18 +1606,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84FD4A50288AAFAF0041C4B4 /* FuzzyLogic in Frameworks */,
 				43F5C2C91B929C09003EB13D /* HealthKit.framework in Frameworks */,
 				43D9FFD621EAE05D00AF44BF /* LoopCore.framework in Frameworks */,
 				8477FE632885F6FE000EE161 /* SnapKit in Frameworks */,
 				C19C8BBC28651E1C0056D5E4 /* Minizip.framework in Frameworks */,
 				C11B9D64286779C000500CF8 /* MockKitUI.framework in Frameworks */,
 				4F7528941DFE1E9500C322D6 /* LoopUI.framework in Frameworks */,
+				84FD4A52288AAFAF0041C4B4 /* FuzzyNumbers in Frameworks */,
 				C11B9D62286779C000500CF8 /* MockKit.framework in Frameworks */,
+				84FD4A4E288AAFAF0041C4B4 /* FuzzyKit in Frameworks */,
 				C19C8BBE28651E3D0056D5E4 /* LoopKit.framework in Frameworks */,
+				84FD4A56288AAFAF0041C4B4 /* FuzzySets in Frameworks */,
 				8477FE9328882508000EE161 /* JGProgressHUD in Frameworks */,
 				C19C8BBA28651DFB0056D5E4 /* TrueTime.framework in Frameworks */,
 				C1F00C60285A802A006302C5 /* SwiftCharts in Frameworks */,
 				C19C8BC528651EE50056D5E4 /* MKRingProgressView.framework in Frameworks */,
+				84FD4A54288AAFAF0041C4B4 /* FuzzyRelations in Frameworks */,
 				C19C8BC328651EAE0056D5E4 /* LoopTestingKit.framework in Frameworks */,
 				C19C8BCE28651F520056D5E4 /* LoopKitUI.framework in Frameworks */,
 			);
@@ -2898,6 +2908,11 @@
 				C1F00C5F285A802A006302C5 /* SwiftCharts */,
 				8477FE622885F6FE000EE161 /* SnapKit */,
 				8477FE9228882508000EE161 /* JGProgressHUD */,
+				84FD4A4D288AAFAF0041C4B4 /* FuzzyKit */,
+				84FD4A4F288AAFAF0041C4B4 /* FuzzyLogic */,
+				84FD4A51288AAFAF0041C4B4 /* FuzzyNumbers */,
+				84FD4A53288AAFAF0041C4B4 /* FuzzyRelations */,
+				84FD4A55288AAFAF0041C4B4 /* FuzzySets */,
 			);
 			productName = Loop;
 			productReference = 43776F8C1B8022E90074EA36 /* Loop.app */;
@@ -3249,6 +3264,7 @@
 				C1CCF10B2858F4F70035389C /* XCRemoteSwiftPackageReference "SwiftCharts" */,
 				8477FE612885F6FE000EE161 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				8477FE9128882508000EE161 /* XCRemoteSwiftPackageReference "JGProgressHUD" */,
+				84FD4A4C288AAFAF0041C4B4 /* XCRemoteSwiftPackageReference "FuzzyKit" */,
 			);
 			productRefGroup = 43776F8D1B8022E90074EA36 /* Products */;
 			projectDirPath = "";
@@ -4731,7 +4747,7 @@
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Loop/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4756,7 +4772,7 @@
 				CODE_SIGN_ENTITLEMENTS = "$(LOOP_ENTITLEMENTS)";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Loop/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4778,7 +4794,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WatchApp Extension/WatchApp Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4805,7 +4821,7 @@
 				CODE_SIGN_ENTITLEMENTS = "WatchApp Extension/WatchApp Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "WatchApp Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -4832,7 +4848,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "$(APPICON_NAME)";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				FRAMEWORK_SEARCH_PATHS = "";
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
@@ -4856,7 +4872,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "$(APPICON_NAME)";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				FRAMEWORK_SEARCH_PATHS = "";
 				IBSC_MODULE = WatchApp_Extension;
 				INFOPLIST_FILE = WatchApp/Info.plist;
@@ -4930,7 +4946,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = Learn/Learn.entitlements;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				INFOPLIST_FILE = Learn/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4949,7 +4965,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = Learn/Learn.entitlements;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				INFOPLIST_FILE = Learn/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5076,7 +5092,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Status Extension/Loop Status Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Loop Status Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -5098,7 +5114,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Status Extension/Loop Status Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Loop Status Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -5160,7 +5176,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Intent Extension/Loop Intent Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_DEBUG)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Loop Intent Extension/Info.plist";
@@ -5183,7 +5199,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Loop Intent Extension/Loop Intent Extension.entitlements";
 				CODE_SIGN_IDENTITY = "$(LOOP_CODE_SIGN_IDENTITY_RELEASE)";
 				CODE_SIGN_STYLE = "$(LOOP_CODE_SIGN_STYLE)";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "Loop Intent Extension/Info.plist";
@@ -5330,6 +5346,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		84FD4A4C288AAFAF0041C4B4 /* XCRemoteSwiftPackageReference "FuzzyKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/allexks/FuzzyKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 		C1CCF10B2858F4F70035389C /* XCRemoteSwiftPackageReference "SwiftCharts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ivanschuetz/SwiftCharts";
@@ -5350,6 +5374,31 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8477FE9128882508000EE161 /* XCRemoteSwiftPackageReference "JGProgressHUD" */;
 			productName = JGProgressHUD;
+		};
+		84FD4A4D288AAFAF0041C4B4 /* FuzzyKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84FD4A4C288AAFAF0041C4B4 /* XCRemoteSwiftPackageReference "FuzzyKit" */;
+			productName = FuzzyKit;
+		};
+		84FD4A4F288AAFAF0041C4B4 /* FuzzyLogic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84FD4A4C288AAFAF0041C4B4 /* XCRemoteSwiftPackageReference "FuzzyKit" */;
+			productName = FuzzyLogic;
+		};
+		84FD4A51288AAFAF0041C4B4 /* FuzzyNumbers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84FD4A4C288AAFAF0041C4B4 /* XCRemoteSwiftPackageReference "FuzzyKit" */;
+			productName = FuzzyNumbers;
+		};
+		84FD4A53288AAFAF0041C4B4 /* FuzzyRelations */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84FD4A4C288AAFAF0041C4B4 /* XCRemoteSwiftPackageReference "FuzzyKit" */;
+			productName = FuzzyRelations;
+		};
+		84FD4A55288AAFAF0041C4B4 /* FuzzySets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 84FD4A4C288AAFAF0041C4B4 /* XCRemoteSwiftPackageReference "FuzzyKit" */;
+			productName = FuzzySets;
 		};
 		C11B9D5A286778A800500CF8 /* SwiftCharts */ = {
 			isa = XCSwiftPackageProductDependency;

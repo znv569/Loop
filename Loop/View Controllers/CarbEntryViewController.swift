@@ -35,6 +35,24 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
 
     var maxQuantity = HKQuantity(unit: .gram(), doubleValue: 250)
     var foods: [FoodEntryCellModel] = []
+    
+    var proteinCarbEntry: NewCarbEntry? {
+        guard foods.count != 0 else { return nil }
+        let protein = foods.reduce(0.0, { $0 + (($1.selectedUnit?.protein ?? 0 ) * $1.count) })
+        print(protein)
+        guard let lastEntryDate = lastEntryDate,
+              protein != 0
+        else { return nil }
+        
+        return NewCarbEntry(
+                date: lastEntryDate,
+                quantity: HKQuantity(unit: .gram(), doubleValue: protein * 0.25), // 25% protein to
+                startDate: date.addingTimeInterval((60 * 60) * 1.2), // + 1h 12m
+                foodType: "Protein to carb convert",
+                absorptionTime: 60 * 60 * 3.5 // 3.5h
+            )
+    }
+    
     private let foodSummaryModel = LableCellModel(font: .systemFont(ofSize: 16, weight: .regular),
                                           textColor: .white,
                                           numberOfLines: 0,
@@ -314,8 +332,8 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     // MARK: - Table view data source
     fileprivate enum Sections: Int, CaseIterable {
         case warning
-        case food
         case details
+        case food
         
         static func indexForDetailsSection(displayWarningSection: Bool) -> Int {
             return displayWarningSection ? Sections.details.rawValue : Sections.details.rawValue - 1
@@ -370,7 +388,8 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return Sections.numberOfSections(displayWarningSection: shouldDisplayAccurateCarbEntryWarning)
+        let minus = originalCarbEntry == nil ? 0 : 1
+        return Sections.numberOfSections(displayWarningSection: shouldDisplayAccurateCarbEntryWarning) - minus
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -599,8 +618,10 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
             delegate: deviceManager,
             originalCarbEntry: originalCarbEntry,
             potentialCarbEntry: updatedEntry,
-            selectedCarbAbsorptionTimeEmoji: selectedDefaultAbsorptionTimeEmoji
+            selectedCarbAbsorptionTimeEmoji: selectedDefaultAbsorptionTimeEmoji,
+            proteinCarbEntry: proteinCarbEntry
         )
+        
         viewModel.generateRecommendationAndStartObserving()
 
         let bolusEntryView = BolusEntryView(viewModel: viewModel).environmentObject(deviceManager.displayGlucoseUnitObservable)
@@ -643,20 +664,6 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     }
     
     private func addProductController() {
-//        FoodManagerCoreData.shared.countData()
-//        BrandMangerCoreData.shared.findBrands(brand: "Магнит") { brands in
-//
-//            FoodManagerCoreData.shared.findProduct(name: "Виноград") { models in
-//                DispatchQueue.main.async {
-//                    self.addProduct(modelCore: models.first!)
-//                }
-//                models.forEach({ model in
-//
-//                    print("\(model.objectID) \(model.name) \(model.brand?.name ?? "") \(model.brand?.id)  \(model.brand?.objectID)")
-//                })
-//            }
-//        }
-        
         let vc = FoodSearchViewController()
         vc.modalPresentationStyle = .popover
         vc.delegate = self

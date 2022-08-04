@@ -92,6 +92,7 @@ final class BolusEntryViewModel: ObservableObject {
     var maximumBolus: HKQuantity?
 
     let originalCarbEntry: StoredCarbEntry?
+    let proteinCarbEntry: NewCarbEntry?
     let potentialCarbEntry: NewCarbEntry?
     let selectedCarbAbsorptionTimeEmoji: String?
 
@@ -190,7 +191,8 @@ final class BolusEntryViewModel: ObservableObject {
         originalCarbEntry: StoredCarbEntry? = nil,
         potentialCarbEntry: NewCarbEntry? = nil,
         selectedCarbAbsorptionTimeEmoji: String? = nil,
-        isManualGlucoseEntryEnabled: Bool = false
+        isManualGlucoseEntryEnabled: Bool = false,
+        proteinCarbEntry: NewCarbEntry? = nil
     ) {
         self.delegate = delegate
         self.now = now
@@ -205,6 +207,7 @@ final class BolusEntryViewModel: ObservableObject {
         }
         
         self.originalCarbEntry = originalCarbEntry
+        self.proteinCarbEntry = proteinCarbEntry
         self.potentialCarbEntry = potentialCarbEntry
         self.selectedCarbAbsorptionTimeEmoji = selectedCarbAbsorptionTimeEmoji
         
@@ -323,6 +326,21 @@ final class BolusEntryViewModel: ObservableObject {
         let amountToDeliver = enteredBolus
         let manualGlucoseSample = manualGlucoseSample
         let potentialCarbEntry = potentialCarbEntry
+        
+        if let proteinCarbEntry = proteinCarbEntry {
+            delegate?.addCarbEntry(proteinCarbEntry, replacing: originalCarbEntry) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let storedCarbEntry):
+                        break
+                    case .failure(let error):
+                        self.isInitiatingSaveOrBolus = false
+                        self.presentAlert(.carbEntryPersistenceFailure)
+                        self.log.error("Failed to add carb entry: %{public}@", String(describing: error))
+                    }
+                }
+            }
+        }
 
         guard let maximumBolus = maximumBolus else {
             presentAlert(.noMaxBolusConfigured)

@@ -47,6 +47,7 @@ class MCoreData<T: NSManagedObject> {
         let fetchRequest = T.fetchRequest()
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = sort
+        fetchRequest.fetchLimit = 250
         var list:[T] = []
         do{
             list = try context.fetch(fetchRequest).compactMap({$0 as? T})
