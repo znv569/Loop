@@ -43,6 +43,7 @@ class TableCell: UITableViewCell, TableCellRepresentable {
         selectionStyle = .none
         backgroundColor = .clear
         contentView.backgroundColor = .clear
+        setupView()
     }
 
     // MARK: Setup functions

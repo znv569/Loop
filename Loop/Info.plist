@@ -43,6 +43,7 @@
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>xdripswift</string>
 		<string>dexcomg6</string>
 		<string>dexcomcgm</string>
 		<string>dexcomshare</string>

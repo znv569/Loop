@@ -113,22 +113,15 @@ class ButtonCell: TableCell {
     
     @objc private
     func tapBegin(_ sender: UIButton) {
-        guard let model = model as? ButtonCellModel else {
-            return
-        }
-        UIView.animate(withDuration: 0.2, animations: {
-            sender.titleLabel?.font = model.font.withSize(model.font.pointSize * 0.8)
+        UIView.animate(withDuration: 0.3, animations: {
+            sender.alpha = 0.7
         })
     }
     
     @objc private
     func tapEnd(_ sender: UIButton) {
-        guard let model = model as? ButtonCellModel else {
-            return
-        }
-        
-        UIView.animate(withDuration: 0.2, animations: {
-            sender.titleLabel?.font = model.font
+        UIView.animate(withDuration: 0.3, animations: {
+            sender.alpha = 1
         })
     }
 

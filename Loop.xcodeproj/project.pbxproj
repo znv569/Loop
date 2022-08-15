@@ -305,6 +305,8 @@
 		8477FE9028880E61000EE161 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE8F28880E61000EE161 /* SearchTableViewController.swift */; };
 		8477FE9328882508000EE161 /* JGProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 8477FE9228882508000EE161 /* JGProgressHUD */; };
 		8477FE9728883C95000EE161 /* BrandSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8477FE9628883C95000EE161 /* BrandSearchViewController.swift */; };
+		84FA5B34289E559600FB15C6 /* AddFoodCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA5B33289E559600FB15C6 /* AddFoodCell.swift */; };
+		84FA5B36289E59EE00FB15C6 /* AddFoodCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FA5B35289E59EE00FB15C6 /* AddFoodCellModel.swift */; };
 		84FD4A4E288AAFAF0041C4B4 /* FuzzyKit in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A4D288AAFAF0041C4B4 /* FuzzyKit */; };
 		84FD4A50288AAFAF0041C4B4 /* FuzzyLogic in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A4F288AAFAF0041C4B4 /* FuzzyLogic */; };
 		84FD4A52288AAFAF0041C4B4 /* FuzzyNumbers in Frameworks */ = {isa = PBXBuildFile; productRef = 84FD4A51288AAFAF0041C4B4 /* FuzzyNumbers */; };
@@ -1264,6 +1266,9 @@
 		7DD382781F8DBFC60071272B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainInterface.strings; sourceTree = "<group>"; };
 		7DD382791F8DBFC60071272B /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Interface.strings; sourceTree = "<group>"; };
 		80F864E52433BF5D0026EC26 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8455C68128A94B7F00D9CB75 /* xDripClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = xDripClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8455C68628A94FC500D9CB75 /* xDripClientUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = xDripClientUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8455C6E528A9658F00D9CB75 /* xDripClientPlugin.loopplugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = xDripClientPlugin.loopplugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8477FE592885F23E000EE161 /* Food.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Food.xcdatamodel; sourceTree = "<group>"; };
 		8477FE5C2885F5A2000EE161 /* TableCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCellModel.swift; sourceTree = "<group>"; };
 		8477FE5F2885F6C4000EE161 /* TableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCell.swift; sourceTree = "<group>"; };
@@ -1288,6 +1293,8 @@
 		8477FE8C2887FFF2000EE161 /* FoodSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodSearchViewController.swift; sourceTree = "<group>"; };
 		8477FE8F28880E61000EE161 /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
 		8477FE9628883C95000EE161 /* BrandSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandSearchViewController.swift; sourceTree = "<group>"; };
+		84FA5B33289E559600FB15C6 /* AddFoodCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFoodCell.swift; sourceTree = "<group>"; };
+		84FA5B35289E59EE00FB15C6 /* AddFoodCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFoodCellModel.swift; sourceTree = "<group>"; };
 		891B508424342BE1005DA578 /* CarbAndBolusFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarbAndBolusFlowViewModel.swift; sourceTree = "<group>"; };
 		892A5D29222EF60A008961AB /* MockKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = MockKit.framework; path = Carthage/Build/iOS/MockKit.framework; sourceTree = SOURCE_ROOT; };
 		892A5D2B222EF60A008961AB /* MockKitUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = MockKitUI.framework; path = Carthage/Build/iOS/MockKitUI.framework; sourceTree = SOURCE_ROOT; };
@@ -2456,6 +2463,7 @@
 				8477FE642885F738000EE161 /* FoodEntryCellModel.swift */,
 				8477FE6F2886AD41000EE161 /* LableCellModel.swift */,
 				8477FE792886FCE9000EE161 /* ButtonCellModel.swift */,
+				84FA5B35289E59EE00FB15C6 /* AddFoodCellModel.swift */,
 			);
 			path = TableCellModel;
 			sourceTree = "<group>";
@@ -2467,6 +2475,7 @@
 				8477FE772886FCB8000EE161 /* ButtonCell.swift */,
 				8477FE662885F8FC000EE161 /* FoodEntryCell.swift */,
 				8477FE712886AD92000EE161 /* LableCell.swift */,
+				84FA5B33289E559600FB15C6 /* AddFoodCell.swift */,
 			);
 			path = TableCell;
 			sourceTree = "<group>";
@@ -2600,6 +2609,9 @@
 		968DCD53F724DE56FFE51920 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8455C6E528A9658F00D9CB75 /* xDripClientPlugin.loopplugin.framework */,
+				8455C68628A94FC500D9CB75 /* xDripClientUI.framework */,
+				8455C68128A94B7F00D9CB75 /* xDripClient.framework */,
 				C159C82E286787EF00A86EC0 /* LoopKit.framework */,
 				C159C8212867859800A86EC0 /* MockKitUI.framework */,
 				C159C8192867857000A86EC0 /* LoopKitUI.framework */,
@@ -3547,7 +3559,9 @@
 				8477FE5D2885F5A2000EE161 /* TableCellModel.swift in Sources */,
 				E95D380324EADF36005E2F50 /* CarbStoreProtocol.swift in Sources */,
 				E98A55ED24EDD6380008715D /* LatestStoredSettingsProvider.swift in Sources */,
+				84FA5B34289E559600FB15C6 /* AddFoodCell.swift in Sources */,
 				8477FE7F2887319B000EE161 /* FoodProduct.swift in Sources */,
+				84FA5B36289E59EE00FB15C6 /* AddFoodCellModel.swift in Sources */,
 				C1FB428F217921D600FAB378 /* PumpManagerUI.swift in Sources */,
 				A9B996F227238705002DC09C /* DosingDecisionStore.swift in Sources */,
 				8477FE8728873CC8000EE161 /* UnitManagerCoreData.swift in Sources */,
@@ -4894,7 +4908,9 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = LoopCore/Info.plist;
@@ -4919,7 +4935,9 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_SEARCH_PATHS = "";
 				INFOPLIST_FILE = LoopCore/Info.plist;
@@ -4982,7 +5000,9 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = LoopCore/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -5003,7 +5023,9 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = LoopCore/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -5022,7 +5044,7 @@
 		43E2D8D71D20BF42004DA55F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				INFOPLIST_FILE = DoseMathTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5037,7 +5059,7 @@
 		43E2D8D81D20BF42004DA55F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				INFOPLIST_FILE = DoseMathTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5053,7 +5075,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				INFOPLIST_FILE = LoopTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5071,7 +5093,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = "$(LOOP_DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				INFOPLIST_FILE = LoopTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5134,7 +5156,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = LoopUI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -5154,7 +5178,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = TK3BURVDQJ;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = LoopUI/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

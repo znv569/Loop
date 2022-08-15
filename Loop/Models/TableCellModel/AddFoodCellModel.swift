@@ -8,47 +8,23 @@
 
 import UIKit
 
-class TextFieldCellModel: TableCellModel {
-    enum TypeKeyboard {
-        case demicalPad
-        case defaultPad
-    }
+class AddFoodCellModel: TableCellModel {
     
     // MARK: Properties
 
     // MARK: System
 
     override var cellIdentifier: String {
-        TextFieldCell.className
+        AddFoodCell.className
     }
 
     // MARK: Stored
-
-    @objc dynamic var text: String?
-    @objc dynamic var attributedString: NSAttributedString?
-    
-    let numberOfLines: Int
-    let font: UIFont
-    let textColor: UIColor
-    let insets: UIEdgeInsets
-    let type: TypeText
-    let alignment: NSTextAlignment
+    var name: String = ""
+    var carb: Double = 0
+    var fat: Double = 0
+    var protein: Double = 0
+    var cal: Double = 0
 
     // MARK: - Init
 
-    init(font: UIFont,
-         textColor: UIColor,
-         numberOfLines: Int = 1,
-         insets: UIEdgeInsets = .zero,
-         type: TypeText = .text,
-         alignment: NSTextAlignment = .left) {
-        self.text = nil
-        self.numberOfLines = numberOfLines
-        self.attributedString = nil
-        self.font = font
-        self.textColor = textColor
-        self.insets = insets
-        self.type = type
-        self.alignment = alignment
-    }
 }

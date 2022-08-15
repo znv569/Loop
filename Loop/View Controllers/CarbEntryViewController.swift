@@ -39,17 +39,17 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     var proteinCarbEntry: NewCarbEntry? {
         guard foods.count != 0 else { return nil }
         let protein = foods.reduce(0.0, { $0 + (($1.selectedUnit?.protein ?? 0 ) * $1.count) })
-        print(protein)
+        let fat = foods.reduce(0.0, { $0 + (($1.selectedUnit?.fat ?? 0 ) * $1.count) })
         guard let lastEntryDate = lastEntryDate,
               protein != 0
         else { return nil }
         
         return NewCarbEntry(
                 date: lastEntryDate,
-                quantity: HKQuantity(unit: .gram(), doubleValue: protein * 0.25), // 25% protein to
-                startDate: date.addingTimeInterval((60 * 60) * 1.2), // + 1h 12m
-                foodType: "Protein to carb convert",
-                absorptionTime: 60 * 60 * 3.5 // 3.5h
+                quantity: HKQuantity(unit: .gram(), doubleValue: (protein * 0.25) + (fat * 0.1)), // 25% protein 10% fat to
+                startDate: date.addingTimeInterval((60 * 60) * 1.4), // + 1h 12m
+                foodType: "🍳🧈",
+                absorptionTime: fat > 40 ? (60 * 60 * 5) : (60 * 60 * 3.5) // fat > 45 5h else  3.5h
             )
     }
     
