@@ -349,15 +349,14 @@ final class BolusEntryViewModel: ObservableObject {
         let potentialCarbEntry = potentialCarbEntry
         
         if let proteinCarbEntry = proteinCarbEntry {
-            delegate?.addCarbEntry(proteinCarbEntry, replacing: originalCarbEntry) { result in
+            delegate.addCarbEntry(proteinCarbEntry, replacing: originalCarbEntry) { result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let storedCarbEntry):
                         break
                     case .failure(let error):
-                        self.isInitiatingSaveOrBolus = false
-                        self.presentAlert(.carbEntryPersistenceFailure)
                         self.log.error("Failed to add carb entry: %{public}@", String(describing: error))
+                        self.presentAlert(.carbEntryPersistenceFailure)
                     }
                 }
             }

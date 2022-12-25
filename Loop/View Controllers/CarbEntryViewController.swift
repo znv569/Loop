@@ -634,8 +634,6 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
         Task {
             await viewModel.generateRecommendationAndStartObserving()
         }
-        
-        viewModel.generateRecommendationAndStartObserving()
 
         let bolusEntryView = BolusEntryView(viewModel: viewModel).environmentObject(deviceManager.displayGlucoseUnitObservable)
 
