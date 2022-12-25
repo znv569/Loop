@@ -138,8 +138,17 @@ final class WatchDataManager: NSObject {
 
         lastSentSettings = settings
 
-        log.default("Transferring LoopSettingsUserInfo")
-        session.transferUserInfo(LoopSettingsUserInfo(settings: settings).rawValue)
+        // clear any old pending settings transfers
+        for transfer in session.outstandingUserInfoTransfers {
+            if (transfer.userInfo["name"] as? String) == LoopSettingsUserInfo.name {
+                log.default("Cancelling old setings transfer")
+                transfer.cancel()
+            }
+        }
+
+        let userInfo = LoopSettingsUserInfo(settings: settings).rawValue
+        log.default("Transferring LoopSettingsUserInfo: %{public}@", userInfo)
+        session.transferUserInfo(userInfo)
     }
 
     @objc private func sendSupportedBolusVolumesIfNeeded() {
@@ -382,6 +391,8 @@ final class WatchDataManager: NSObject {
 
                 // When we've successfully started the bolus, send a new context with our new prediction
                 self.sendWatchContextIfNeeded()
+
+                self.deviceManager.loopManager.updateRemoteRecommendation()
             }
         }
 

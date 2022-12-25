@@ -30,11 +30,13 @@ struct FeatureFlagConfiguration: Decodable {
     let predictedGlucoseChartClampEnabled: Bool
     let scenariosEnabled: Bool
     let sensitivityOverridesEnabled: Bool
+    let showEventualBloodGlucoseOnWatchEnabled: Bool
     let simulatedCoreDataEnabled: Bool
     let siriEnabled: Bool
     let simpleBolusCalculatorEnabled: Bool
     let usePositiveMomentumAndRCForManualBoluses: Bool
     let dynamicCarbAbsorptionEnabled: Bool
+    let adultChildInsulinModelSelectionEnabled: Bool
 
 
     fileprivate init() {
@@ -170,6 +172,12 @@ struct FeatureFlagConfiguration: Decodable {
         self.scenariosEnabled = false
         #endif
 
+        #if SHOW_EVENTUAL_BLOOD_GLUCOSE_ON_WATCH_ENABLED
+        self.showEventualBloodGlucoseOnWatchEnabled = true
+        #else
+        self.showEventualBloodGlucoseOnWatchEnabled = false
+        #endif
+        
         #if SIMULATED_CORE_DATA_ENABLED
         self.simulatedCoreDataEnabled = true
         #else
@@ -196,6 +204,12 @@ struct FeatureFlagConfiguration: Decodable {
         self.usePositiveMomentumAndRCForManualBoluses = true
         #endif
 
+        #if ADULT_CHILD_INSULIN_MODEL_SELECTION_ENABLED
+        self.adultChildInsulinModelSelectionEnabled = true
+        #else
+        self.adultChildInsulinModelSelectionEnabled = false
+        #endif
+
         self.dynamicCarbAbsorptionEnabled = true
     }
 }
@@ -220,6 +234,7 @@ extension FeatureFlagConfiguration : CustomDebugStringConvertible {
             "* remoteOverridesEnabled: \(remoteOverridesEnabled)",
             "* scenariosEnabled: \(scenariosEnabled)",
             "* sensitivityOverridesEnabled: \(sensitivityOverridesEnabled)",
+            "* showEventualBloodGlucoseOnWatchEnabled: \(showEventualBloodGlucoseOnWatchEnabled)",
             "* simulatedCoreDataEnabled: \(simulatedCoreDataEnabled)",
             "* siriEnabled: \(siriEnabled)",
             "* automaticBolusEnabled: \(automaticBolusEnabled)",
@@ -227,7 +242,8 @@ extension FeatureFlagConfiguration : CustomDebugStringConvertible {
             "* allowDebugFeatures: \(allowDebugFeatures)",
             "* simpleBolusCalculatorEnabled: \(simpleBolusCalculatorEnabled)",
             "* usePositiveMomentumAndRCForManualBoluses: \(usePositiveMomentumAndRCForManualBoluses)",
-            "* dynamicCarbAbsorptionEnabled: \(dynamicCarbAbsorptionEnabled)"
+            "* dynamicCarbAbsorptionEnabled: \(dynamicCarbAbsorptionEnabled)",
+            "* adultChildInsulinModelSelectionEnabled: \(adultChildInsulinModelSelectionEnabled)"
         ].joined(separator: "\n")
     }
 }

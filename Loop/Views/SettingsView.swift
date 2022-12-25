@@ -52,7 +52,7 @@ public struct SettingsView: View {
                 if FeatureFlags.automaticBolusEnabled {
                     dosingStrategySection
                 }
-                alertPermissionsSection
+                alertManagementSection
                 if viewModel.pumpManagerSettingsViewModel.isSetUp() {
                     therapySettingsSection
                 }
@@ -159,13 +159,12 @@ extension SettingsView {
         }
     }
 
-    private var alertPermissionsSection: some View {
+    private var alertManagementSection: some View {
         Section {
-            NavigationLink(destination:
-                NotificationsCriticalAlertPermissionsView(mode: .flow, checker: viewModel.alertPermissionsChecker))
+            NavigationLink(destination: AlertManagementView(checker: viewModel.alertPermissionsChecker, alertMuter: viewModel.alertMuter))
             {
                 HStack {
-                    Text(NSLocalizedString("Alert Permissions", comment: "Alert Permissions button text"))
+                    Text(NSLocalizedString("Alert Management", comment: "Alert Permissions button text"))
                     if viewModel.alertPermissionsChecker.showWarning ||
                         viewModel.alertPermissionsChecker.notificationCenterSettings.scheduledDeliveryEnabled {
                         Spacer()
@@ -188,6 +187,7 @@ extension SettingsView {
                     TherapySettingsView(mode: .settings,
                                         viewModel: TherapySettingsViewModel(therapySettings: self.viewModel.therapySettings(),
                                                                             sensitivityOverridesEnabled: FeatureFlags.sensitivityOverridesEnabled,
+                                                                            adultChildInsulinModelSelectionEnabled: FeatureFlags.adultChildInsulinModelSelectionEnabled,
                                                                             delegate: self.viewModel.therapySettingsViewModelDelegate))
                         .environmentObject(displayGlucoseUnitObservable)
                         .environment(\.dismissAction, self.dismiss)

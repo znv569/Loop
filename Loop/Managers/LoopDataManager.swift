@@ -11,6 +11,7 @@ import Combine
 import HealthKit
 import LoopKit
 import LoopCore
+import WidgetKit
 
 protocol PresetActivationObserver: AnyObject {
     func presetActivated(context: TemporaryScheduleOverride.Context, duration: TemporaryScheduleOverride.Duration)
@@ -41,8 +42,11 @@ final class LoopDataManager {
     weak var delegate: LoopDataManagerDelegate?
 
     private let logger = DiagnosticLog(category: "LoopDataManager")
+    private let widgetLog = DiagnosticLog(category: "LoopWidgets")
 
     private let analyticsServicesManager: AnalyticsServicesManager
+
+    private let trustedTimeOffset: () -> TimeInterval
 
     private let now: () -> Date
 
@@ -56,6 +60,8 @@ final class LoopDataManager {
     private var overrideIntentObserver: NSKeyValueObservation? = nil
 
     weak var presetActivationObserver: PresetActivationObserver?
+
+    private var timeBasedDoseApplicationFactor: Double = 1.0
 
     deinit {
         for observer in notificationObservers {
@@ -77,7 +83,8 @@ final class LoopDataManager {
         latestStoredSettingsProvider: LatestStoredSettingsProvider,
         now: @escaping () -> Date = { Date() },
         pumpInsulinType: InsulinType?,
-        automaticDosingStatus: AutomaticDosingStatus
+        automaticDosingStatus: AutomaticDosingStatus,
+        trustedTimeOffset: @escaping () -> TimeInterval
     ) {
         self.analyticsServicesManager = analyticsServicesManager
         self.lockedLastLoopCompleted = Locked(lastLoopCompleted)
@@ -104,6 +111,8 @@ final class LoopDataManager {
         self.lockedPumpInsulinType = Locked(pumpInsulinType)
 
         self.automaticDosingStatus = automaticDosingStatus
+
+        self.trustedTimeOffset = trustedTimeOffset
 
         retrospectiveCorrection = settings.enabledRetrospectiveCorrectionAlgorithm
 
@@ -145,6 +154,7 @@ final class LoopDataManager {
                     self.carbEffect = nil
                     self.carbsOnBoard = nil
                     self.recentCarbEntries = nil
+                    self.remoteRecommendationNeedsUpdating = true
                     self.notify(forChange: .carbs)
                 }
             },
@@ -157,6 +167,7 @@ final class LoopDataManager {
                     self.logger.default("Received notification of glucose samples changing")
 
                     self.glucoseMomentumEffect = nil
+                    self.remoteRecommendationNeedsUpdating = true
 
                     self.notify(forChange: .glucose)
                 }
@@ -170,6 +181,7 @@ final class LoopDataManager {
                     self.logger.default("Received notification of dosing changing")
 
                     self.insulinEffect = nil
+                    self.remoteRecommendationNeedsUpdating = true
 
                     self.notify(forChange: .insulin)
                 }
@@ -256,7 +268,11 @@ final class LoopDataManager {
         }
 
         if newValue.defaultRapidActingModel != oldValue.defaultRapidActingModel {
-            doseStore.insulinModelProvider = PresetInsulinModelProvider(defaultRapidActingModel: newValue.defaultRapidActingModel)
+            if FeatureFlags.adultChildInsulinModelSelectionEnabled {
+                doseStore.insulinModelProvider = PresetInsulinModelProvider(defaultRapidActingModel: newValue.defaultRapidActingModel)
+            } else {
+                doseStore.insulinModelProvider = PresetInsulinModelProvider(defaultRapidActingModel: nil)
+            }
             invalidateCachedEffects = true
             analyticsServicesManager.didChangeInsulinModel()
         }
@@ -420,7 +436,40 @@ final class LoopDataManager {
         logger.error("Loop did error: %{public}@", String(describing: error))
         lastLoopError = error
         analyticsServicesManager.loopDidError(error: error)
-        dosingDecisionStore.storeDosingDecision(dosingDecision) {}
+        var dosingDecisionWithError = dosingDecision
+        dosingDecisionWithError.appendError(error)
+        dosingDecisionStore.storeDosingDecision(dosingDecisionWithError) {}
+    }
+
+    // This is primarily for remote clients displaying a bolus recommendation and forecast
+    // Should be called after any significant change to forecast input data.
+
+
+    var remoteRecommendationNeedsUpdating: Bool = false
+
+    func updateRemoteRecommendation() {
+        dataAccessQueue.async {
+            if self.remoteRecommendationNeedsUpdating {
+                var (dosingDecision, updateError) = self.update(for: .updateRemoteRecommendation)
+
+                if let error = updateError {
+                    self.logger.error("Error updating manual bolus recommendation: %{public}@", String(describing: error))
+                } else {
+                    do {
+                        if let predictedGlucoseIncludingPendingInsulin = self.predictedGlucoseIncludingPendingInsulin,
+                           let manualBolusRecommendation = try self.recommendManualBolus(forPrediction: predictedGlucoseIncludingPendingInsulin, consideringPotentialCarbEntry: nil)
+                        {
+                            dosingDecision.manualBolusRecommendation = ManualBolusRecommendationWithDate(recommendation: manualBolusRecommendation, date: Date())
+                            self.logger.debug("Manual bolus rec = %{public}@", String(describing: dosingDecision.manualBolusRecommendation))
+                            self.dosingDecisionStore.storeDosingDecision(dosingDecision) {}
+                        }
+                    } catch {
+                        self.logger.error("Error updating manual bolus recommendation: %{public}@", String(describing: error))
+                    }
+                }
+                self.remoteRecommendationNeedsUpdating = false
+            }
+        }
     }
 }
 
@@ -590,7 +639,6 @@ extension LoopDataManager {
     func deleteCarbEntry(_ oldEntry: StoredCarbEntry, completion: @escaping (_ result: CarbStoreResult<Bool>) -> Void) {
         carbStore.deleteCarbEntry(oldEntry) { result in
             completion(result)
-            self.updateRecommendedManualBolus()
         }
     }
 
@@ -747,12 +795,20 @@ extension LoopDataManager {
     func loop() {
         
         dataAccessQueue.async {
-            
-            // Ensure Loop does not happen more than once every 4.5 minutes; this is important for correct usage of automatic bolus
-            // partial application factor
-            if let lastLoopCompleted = self.lastLoopCompleted, Date().timeIntervalSince(lastLoopCompleted) < TimeInterval(minutes: 4.5) {
-                self.logger.default("Skipping loop() attempt as last loop completed at %{public}@", String(describing: lastLoopCompleted))
-                return
+
+            // If time was changed to future time, and a loop completed, then time was fixed, lastLoopCompleted will prevent looping
+            // until the future loop time passes. Fix that here.
+            if let lastLoopCompleted = self.lastLoopCompleted, Date() < lastLoopCompleted, self.trustedTimeOffset() == 0 {
+                self.logger.error("Detected future lastLoopCompleted. Restoring.")
+                self.lastLoopCompleted = Date()
+            }
+
+            // Partial application factor assumes 5 minute intervals. If our looping intervals are shorter, then this will be adjusted
+            self.timeBasedDoseApplicationFactor = 1.0
+            if let lastLoopCompleted = self.lastLoopCompleted {
+                let timeSinceLastLoop = max(0, Date().timeIntervalSince(lastLoopCompleted))
+                self.timeBasedDoseApplicationFactor = min(1, timeSinceLastLoop/TimeInterval.minutes(5))
+                self.logger.default("Looping with timeBasedDoseApplicationFactor = %{public}@", String(describing: self.timeBasedDoseApplicationFactor))
             }
 
             self.logger.default("Loop running")
@@ -786,37 +842,19 @@ extension LoopDataManager {
         logger.default("Loop ended")
         notify(forChange: .loopFinished)
 
-        updateRecommendedManualBolus()
-    }
-
-    // This is primarily for external clients displaying a bolus recommendation and forecast
-    // Should be called after any significant change to forecast input data.
-    private func updateRecommendedManualBolus() {
-        dataAccessQueue.async {
-            var (dosingDecision, updateError) = self.update(for: .updateRecommendedManualBolus)
-
-            if let error = updateError {
-                self.logger.error("Error updating manual bolus recommendation: %{public}@", String(describing: error))
-            } else {
-                do {
-                    if let predictedGlucoseIncludingPendingInsulin = self.predictedGlucoseIncludingPendingInsulin,
-                       let manualBolusRecommendation = try self.recommendManualBolus(forPrediction: predictedGlucoseIncludingPendingInsulin, consideringPotentialCarbEntry: nil)
-                    {
-                        dosingDecision.manualBolusRecommendation = ManualBolusRecommendationWithDate(recommendation: manualBolusRecommendation, date: Date())
-                        self.logger.debug("Manual bolus rec = %{public}@", String(describing: dosingDecision.manualBolusRecommendation))
-                        self.dosingDecisionStore.storeDosingDecision(dosingDecision) {}
-                    }
-                } catch {
-                    self.logger.error("Error updating manual bolus recommendation: %{public}@", String(describing: error))
-                }
-            }
+        // 5 second delay to allow stores to cache data before it is read by widget
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.widgetLog.default("Refreshing widget. Reason: Loop completed")
+            WidgetCenter.shared.reloadAllTimelines()
         }
+
+        updateRemoteRecommendation()
     }
 
     fileprivate enum UpdateReason: String {
         case loop
         case getLoopState
-        case updateRecommendedManualBolus
+        case updateRemoteRecommendation
     }
 
     fileprivate func update(for reason: UpdateReason) -> (StoredDosingDecision, LoopError?) {
@@ -1395,7 +1433,7 @@ extension LoopDataManager {
         }
 
         let volumeRounder = { (_ units: Double) in
-            return self.delegate?.loopDataManager(self, roundBolusVolume: units) ?? units
+            return self.delegate?.roundBolusVolume(units: units) ?? units
         }
         
         let model = doseStore.insulinModelProvider.model(for: pumpInsulinType)
@@ -1565,7 +1603,7 @@ extension LoopDataManager {
             }
 
             let rateRounder = { (_ rate: Double) in
-                return self.delegate?.loopDataManager(self, roundBasalRate: rate) ?? rate
+                return self.delegate?.roundBasalRate(unitsPerHour: rate) ?? rate
             }
 
             let lastTempBasal: DoseEntry?
@@ -1581,7 +1619,7 @@ extension LoopDataManager {
             switch settings.automaticDosingStrategy {
             case .automaticBolus:
                 let volumeRounder = { (_ units: Double) in
-                    return self.delegate?.loopDataManager(self, roundBolusVolume: units) ?? units
+                    return self.delegate?.roundBolusVolume(units: units) ?? units
                 }
 
                 dosingRecommendation = predictedGlucose.recommendedAutomaticDose(
@@ -1592,7 +1630,7 @@ extension LoopDataManager {
                     model: doseStore.insulinModelProvider.model(for: pumpInsulinType),
                     basalRates: basalRates!,
                     maxAutomaticBolus: maxBolus! * LoopConstants.bolusPartialApplicationFactor,
-                    partialApplicationFactor: LoopConstants.bolusPartialApplicationFactor,
+                    partialApplicationFactor: LoopConstants.bolusPartialApplicationFactor * self.timeBasedDoseApplicationFactor,
                     lastTempBasal: lastTempBasal,
                     volumeRounder: volumeRounder,
                     rateRounder: rateRounder,
@@ -1657,8 +1695,8 @@ extension LoopDataManager {
             delegateError = error
             updateGroup.leave()
         }
-
         updateGroup.wait()
+
         if delegateError == nil {
             self.recommendedAutomaticDose = nil
         }
@@ -2060,14 +2098,14 @@ protocol LoopDataManagerDelegate: AnyObject {
     /// - Parameters:
     ///   - rate: The recommended rate in U/hr
     /// - Returns: a supported rate of delivery in Units/hr. The rate returned should not be larger than the passed in rate.
-    func loopDataManager(_ manager: LoopDataManager, roundBasalRate unitsPerHour: Double) -> Double
+    func roundBasalRate(unitsPerHour: Double) -> Double
 
     /// Asks the delegate to round a recommended bolus volume to a supported volume
     ///
     /// - Parameters:
     ///   - units: The recommended bolus in U
     /// - Returns: a supported bolus volume in U. The volume returned should be the nearest deliverable volume.
-    func loopDataManager(_ manager: LoopDataManager, roundBolusVolume units: Double) -> Double
+    func roundBolusVolume(units: Double) -> Double
 
     /// The pump manager status, if one exists.
     var pumpManagerStatus: PumpManagerStatus? { get }
