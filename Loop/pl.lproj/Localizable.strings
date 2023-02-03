@@ -1,6 +1,21 @@
 /* The string format appended to active insulin that describes pending insulin. (1: pending insulin) */
 " (pending: %@)" = " (oczekujące: %@)";
 
+/* The format for an active override preset. (1: preset symbol)(2: preset name) */
+"%@ %@" = "%1$@ %2$@";
+
+/* Formats absorbed carb value */
+"%@ absorbed" = "%@ zaabsorbowane";
+
+/* The subtitle format describing total insulin. (1: localized insulin total) */
+"%@ U Total" = "%@ J łącznie";
+
+/* Appends a full-stop to a statement */
+"%@." = "%@.";
+
+/* Format string for glucose target range. (1: Min target)(2: Max target)(3: glucose unit) */
+"%1$@ – %2$@ %3$@" = "%1$@ – %2$@ %3$@";
+
 /* Format string for carb ratio average. (1: value)(2: carb unit) */
 "%1$@ %2$@/U" = "%1$@ %2$@/J";
 
@@ -19,23 +34,8 @@
 /* The format string for the app name and version number. (1: bundle name)(2: bundle version) */
 "%1$@ v%2$@" = "%1$@ v%2$@";
 
-/* Format string for glucose target range. (1: Min target)(2: Max target)(3: glucose unit) */
-"%1$@ – %2$@ %3$@" = "%1$@ – %2$@ %3$@";
-
 /* Formats (1: carb value) and (2: food type) */
 "%1$@: %2$@" = "%1$@: %2$@";
-
-/* The format for an active override preset. (1: preset symbol)(2: preset name) */
-"%@ %@" = "%1$@ %2$@";
-
-/* Formats absorbed carb value */
-"%@ absorbed" = "%@ zaabsorbowane";
-
-/* The subtitle format describing total insulin. (1: localized insulin total) */
-"%@ U Total" = "%@ J łącznie";
-
-/* Appends a full-stop to a statement */
-"%@." = "%@.";
 
 /* Description of the prediction input effect for glucose momentum */
 "15 min glucose regression coefficient (b₁), continued with decay over 30 min" = "15 minutowy współczynnik regresji glukozy (b₁), kontynuowany z rozkładem przez 30 min.";
@@ -71,29 +71,24 @@
    Title text for button to set up a CGM */
 "Add CGM" = "Dodaj CGM";
 
-/* The label of the carb entry button */
+/* The label of the meal button */
 "Add Meal" = "Dodaj posiłek";
 
-/* Title text for button to set up a new pump */
+/* Action sheet title selecting Pump
+   Title text for button to set up a new pump */
 "Add Pump" = "Dodaj pompę";
 
 /* Title text for button to set up a service */
 "Add Service" = "Add Service";
 
-/* Button title to delete a service */
-"Delete Service" = "Delete Service";
-
-/* Confirmation message for deleting a service */
-"Are you sure you want to delete this service?" = "Are you sure you want to delete this service?";
-
 /* The title of the section containing algorithm settings */
 "Algorithm Settings" = "Ustawienia algorytmu";
 
-/* Subtitle of Rapid-Acting – Children preset */
-"An adjustment to the adult model based on empirical effects in children." = "Dostosowanie do modelu dorosłego opartego na efektach empirycznych u dzieci.";
-
 /* Confirmation message for deleting a CGM */
 "Are you sure you want to delete this CGM?" = "Czy na pewno chcesz usunąć ten CGM?";
+
+/* Confirmation message for deleting a service */
+"Are you sure you want to delete this service?" = "Are you sure you want to delete this service?";
 
 /* Format fragment for a specific time */
 "at %@" = "o %@";
@@ -177,11 +172,14 @@
 /* The title of the cell indicating a generic temporary override is enabled */
 "Custom Override" = "Pominięcie niestandardowe";
 
+/* The title of the button to remove the credentials for a service */
+"Delete Account" = "Usuń konto";
+
 /* Button title to delete CGM */
 "Delete CGM" = "Usuń CGM";
 
-/* The title of the button to remove the credentials for a service */
-"Delete Account" = "Usuń konto";
+/* Button title to delete a service */
+"Delete Service" = "Delete Service";
 
 /* Title text for delivery limits */
 "Delivery Limits" = "Limit podaży";
@@ -291,7 +289,7 @@
 "Predicted glucose of %1$@ is below your suspend threshold setting." = "Przewidywany poziom cukru %1$@ jest poniżej progu zawieszenia.";
 
 /* Format string describing retrospective glucose prediction comparison. (1: Predicted glucose)(2: Actual glucose)(3: difference) */
-"Predicted: %1$@\nActual: %2$@ (%3$@)" = "Przewidywana: %1$@\Rzeczywista: %2$@ (%3$@)";
+"Predicted: %1$@\nActual: %2$@ (%3$@)" = "Przewidywana: %1$@Rzeczywista: %2$@ (%3$@)";
 
 /* The title of the pump section in settings */
 "Pump" = "Pompa";
@@ -361,6 +359,9 @@
 
 /* The subtitle of the cell displaying an action to resume insulin delivery */
 "Tap to Resume" = "Dotknij, aby wznowić";
+
+/* Forecast explanation modal on bolus view */
+"The bolus dosing algorithm uses a more conservative estimate of forecasted blood glucose than what is used to adjust your basal rate.\n\nAs a result, your forecasted blood glucose after a bolus may still be higher than your target range." = "Algorytm dawkowania bolusa wykorzystuje bardziej ostrożne oszacowanie przewidywanego poziomu glukozy we krwi niż to, które jest używane do dostosowania dawki podstawowej. \n\nW rezultacie przewidywany poziom glukozy we krwi po podaniu bolusa może nadal być wyższy niż zakres docelowy.";
 
 /* Subtitle description of Walsh insulin model setting */
 "The legacy model used by Loop, allowing customization of action duration." = "Model umożliwiający dostosowanie czasu działania insuliny.";

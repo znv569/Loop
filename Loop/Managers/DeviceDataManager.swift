@@ -94,6 +94,15 @@ final class DeviceDataManager {
         didSet {
             dispatchPrecondition(condition: .onQueue(.main))
             setupCGM()
+
+            if cgmManager?.managerIdentifier != oldValue?.managerIdentifier {
+                if let cgmManager = cgmManager {
+                    analyticsServicesManager.cgmWasAdded(identifier: cgmManager.managerIdentifier)
+                } else {
+                    analyticsServicesManager.cgmWasRemoved()
+                }
+            }
+
             NotificationCenter.default.post(name: .CGMManagerChanged, object: self, userInfo: nil)
             rawCGMManager = cgmManager?.rawValue
             UserDefaults.appGroup?.clearLegacyCGMManagerRawValue()
@@ -112,6 +121,14 @@ final class DeviceDataManager {
             // If the current CGMManager is a PumpManager, we clear it out.
             if cgmManager is PumpManagerUI {
                 cgmManager = nil
+            }
+
+            if pumpManager?.managerIdentifier != oldValue?.managerIdentifier {
+                if let pumpManager = pumpManager {
+                    analyticsServicesManager.pumpWasAdded(identifier: pumpManager.managerIdentifier)
+                } else {
+                    analyticsServicesManager.pumpWasRemoved()
+                }
             }
 
             setupPump()
@@ -201,8 +218,6 @@ final class DeviceDataManager {
 
     var analyticsServicesManager: AnalyticsServicesManager
 
-    var loggingServicesManager: LoggingServicesManager
-
     var settingsManager: SettingsManager
 
     var remoteDataServicesManager: RemoteDataServicesManager { return servicesManager.remoteDataServicesManager }
@@ -230,6 +245,8 @@ final class DeviceDataManager {
     init(pluginManager: PluginManager,
          alertManager: AlertManager,
          settingsManager: SettingsManager,
+         loggingServicesManager: LoggingServicesManager,
+         analyticsServicesManager: AnalyticsServicesManager,
          bluetoothProvider: BluetoothProvider,
          alertPresenter: AlertPresenter,
          closedLoopStatus: ClosedLoopStatus,
@@ -250,9 +267,6 @@ final class DeviceDataManager {
             }
         }
         deviceLog = PersistentDeviceLog(storageFile: deviceLogDirectory.appendingPathComponent("Storage.sqlite"), maxEntryAge: localCacheDuration)
-
-        loggingServicesManager = LoggingServicesManager()
-        analyticsServicesManager = AnalyticsServicesManager()
 
         self.pluginManager = pluginManager
         self.alertManager = alertManager
@@ -286,6 +300,8 @@ final class DeviceDataManager {
         } else {
             insulinModelProvider = PresetInsulinModelProvider(defaultRapidActingModel: nil)
         }
+
+        self.analyticsServicesManager = analyticsServicesManager
         
         self.doseStore = DoseStore(
             healthStore: healthStore,
@@ -369,7 +385,8 @@ final class DeviceDataManager {
             trustedTimeOffset: { trustedTimeChecker.detectedSystemTimeOffset }
         )
         cacheStore.delegate = loopManager
-        loopManager.presetActivationObserver = alertManager
+        loopManager.presetActivationObservers.append(alertManager)
+        loopManager.presetActivationObservers.append(analyticsServicesManager)
 
         watchManager = WatchDataManager(deviceManager: self, healthStore: healthStore)
 
@@ -718,6 +735,8 @@ private extension DeviceDataManager {
             alertManager?.addAlertSoundVendor(managerIdentifier: cgmManager.managerIdentifier,
                                               soundVendor: cgmManager)            
             cgmHasValidSensorSession = cgmManager.cgmManagerStatus.hasValidSensorSession
+
+            analyticsServicesManager.identifyCGMType(cgmManager.managerIdentifier)
         }
 
         if let cgmManagerUI = cgmManager as? CGMManagerUI {
@@ -745,6 +764,8 @@ private extension DeviceDataManager {
                                                     soundVendor: pumpManager)
             
             deliveryUncertaintyAlertManager = DeliveryUncertaintyAlertManager(pumpManager: pumpManager, alertPresenter: alertPresenter)
+
+            analyticsServicesManager.identifyPumpType(pumpManager.managerIdentifier)
         }
     }
 
@@ -1464,6 +1485,7 @@ extension DeviceDataManager {
                 UIApplication.shared.endBackgroundTask(backgroundTask)
             }
             completion(result)
+            self.analyticsServicesManager.didAddCarbs(source: "Remote", amount: carbEntry.quantity.doubleValue(for: .gram()))
         }
     }
     
@@ -1482,6 +1504,7 @@ extension DeviceDataManager {
                 UIApplication.shared.endBackgroundTask(backgroundTask)
             }
             completion(error)
+            self.analyticsServicesManager.didBolus(source: "Remote", units: units)
         }
     }
     

@@ -54,7 +54,7 @@ public struct SettingsView: View {
                 }
                 alertManagementSection
                 if viewModel.pumpManagerSettingsViewModel.isSetUp() {
-                    therapySettingsSection
+                    configurationSection
                 }
                 deviceSettingsSection
                 if viewModel.pumpManagerSettingsViewModel.isTestingDevice || viewModel.cgmManagerSettingsViewModel.isTestingDevice {
@@ -109,6 +109,16 @@ public struct SettingsView: View {
             set: { self.viewModel.closedLoopPreference = $0 }
         )
     }
+}
+
+struct ConfigurationMenuItem: Identifiable {
+    var id: String {
+        return pluginIdentifier + String(describing: offset)
+    }
+
+    let view: AnyView
+    let pluginIdentifier: String
+    let offset: Int
 }
 
 extension SettingsView {
@@ -176,7 +186,7 @@ extension SettingsView {
         }
     }
         
-    private var therapySettingsSection: some View {
+    private var configurationSection: some View {
         Section(header: SectionHeader(label: NSLocalizedString("Configuration", comment: "The title of the Configuration section in settings"))) {
             LargeButton(action: { self.therapySettingsIsPresented = true },
                             includeArrow: true,
@@ -198,9 +208,21 @@ extension SettingsView {
                         .environment(\.guidanceColors, self.guidanceColors)
                         .environment(\.insulinTintColor, self.insulinTintColor)
             }
+            
+            ForEach(configurationMenuItemsForSupportPlugins) { item in
+                item.view
+            }
         }
     }
-    
+
+    private var configurationMenuItemsForSupportPlugins: [ConfigurationMenuItem] {
+        self.viewModel.availableSupports.flatMap { plugin in
+            plugin.configurationMenuItems().enumerated().map { index, view in
+                ConfigurationMenuItem(view: view, pluginIdentifier: plugin.identifier, offset: index)
+            }
+        }
+    }
+
     private var deviceSettingsSection: some View {
         Section {
             pumpSection
