@@ -450,15 +450,15 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         let minus = originalCarbEntry == nil ? 0 : 1
-        return Sections.numberOfSections(displayWarningSection: shouldDisplayAccurateCarbEntryWarning) - minus
+        return Sections.numberOfSections(displayWarningSection: shouldDisplayWarning) - minus
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let realSection = shouldDisplayAccurateCarbEntryWarning ? section : section + 1
+        let realSection = (shouldDisplayAccurateCarbEntryWarning || shouldDisplayOverrideEnabledWarning) ? section : section + 1
         if realSection == Sections.food.rawValue {
             return foodSection.items.count
         }
-        return Sections.numberOfRows(for: section, displayWarningSection: shouldDisplayAccurateCarbEntryWarning)
+        return Sections.numberOfRows(for: section, displayCarbEntryWarning: shouldDisplayAccurateCarbEntryWarning, displayOverrideWarning: shouldDisplayOverrideEnabledWarning)
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
