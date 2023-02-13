@@ -64,6 +64,7 @@ public struct SettingsView: View {
                     servicesSection
                 }
                 supportSection
+                
                 if let profileExpiration = Bundle.main.profileExpiration, FeatureFlags.profileExpirationSettingsViewEnabled {
                     profileExpirationSection(profileExpiration: profileExpiration)
                 }
@@ -376,6 +377,52 @@ extension SettingsView {
             }
         }
     }
+    
+    
+    /*
+     DIY loop specific component to show users the amount of time remaining on their build before a rebuild is necessary.
+     */
+    private func profileExpirationSection(profileExpiration:Date) -> some View {
+        let nearExpiration : Bool = ProfileExpirationAlerter.isNearProfileExpiration(profileExpiration: profileExpiration)
+        let profileExpirationMsg = ProfileExpirationAlerter.createProfileExpirationSettingsMessage(profileExpiration: profileExpiration)
+        let readableExpirationTime = Self.dateFormatter.string(from: profileExpiration)
+        
+        return Section(header: SectionHeader(label: NSLocalizedString("App Profile", comment: "Settings app profile section")),
+                       footer: Text(NSLocalizedString("Profile expires ", comment: "Time that profile expires") + readableExpirationTime)) {
+            if(nearExpiration) {
+                Text(profileExpirationMsg).foregroundColor(.red)
+            } else {
+                HStack {
+                    Text("Profile Expiration", comment: "Settings App Profile expiration view")
+                    Spacer()
+                    Text(profileExpirationMsg).foregroundColor(Color.secondary)
+                }
+            }
+            Button(action: {
+                UIApplication.shared.open(URL(string: "https://loopkit.github.io/loopdocs/build/updating/")!)
+            }) {
+                Text(NSLocalizedString("How to update (LoopDocs)", comment: "The title text for how to update"))
+            }
+        }
+    }
+    
+    private var updateProductSection: some View {
+       Section(header: SectionHeader(label: NSLocalizedString("Update product base", comment: "The title of the support section in settings"))) {
+           VStack {
+                Button(action: {
+                    isImporting = true
+                }, label: {
+                    Text(NSLocalizedString("Select json file", comment: "The title of the support item in settings"))
+                })
+               
+               if progressValue > 0 && progressValue != 1 {
+                   ProgressBar(value: $progressValue).frame(height: 20)
+                   Text("Please wait")
+               }
+           }
+       }
+    }
+
 
     private static var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
