@@ -64,6 +64,9 @@ public struct SettingsView: View {
                     servicesSection
                 }
                 supportSection
+                if let profileExpiration = Bundle.main.profileExpiration, FeatureFlags.profileExpirationSettingsViewEnabled {
+                    profileExpirationSection(profileExpiration: profileExpiration)
+                }
                 
                 updateProductSection
             }
@@ -373,26 +376,13 @@ extension SettingsView {
             }
         }
     }
-    
-    
-    private var updateProductSection: some View {
-       Section(header: SectionHeader(label: NSLocalizedString("Update product base", comment: "The title of the support section in settings"))) {
-           VStack {
-                Button(action: {
-                    isImporting = true
-                }, label: {
-                    Text(NSLocalizedString("Select json file", comment: "The title of the support item in settings"))
-                        .foregroundColor(Color(UIColor.white))
-                })
-               
-               if progressValue > 0 && progressValue != 1 {
-                   ProgressBar(value: $progressValue).frame(height: 20)
-                   Text("Please wait")
-               }
-           }
-       }
-    }
-    
+
+    private static var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .short
+        return dateFormatter // formats date like "February 4, 2023 at 2:35 PM"
+    }()
 
     private var plusImage: some View {
         Image(systemName: "plus.circle")
