@@ -5341,6 +5341,7 @@
 				DEVELOPMENT_TEAM = 746TYG82BF;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Loop/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NZLoop;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -5366,6 +5367,7 @@
 				DEVELOPMENT_TEAM = 746TYG82BF;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Loop/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NZLoop;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -17,7 +17,6 @@ class SearchTableViewController: UIViewController {
     
     lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.textColor = .white
         textField.placeholder = "Input prodct name"
         textField.font = .systemFont(ofSize: 19, weight: .regular)
         textField.addTarget(self, action: #selector(textChange), for: [.editingChanged, .valueChanged])
@@ -37,7 +36,7 @@ class SearchTableViewController: UIViewController {
         button.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
         button.addTarget(self, action: #selector(tapDelete), for: .touchUpInside)
         button.isHidden = true
-        button.tintColor = .white
+        button.tintColor = .secondaryLabel
         button.contentMode = .center
         return button
     }()
@@ -58,6 +57,15 @@ class SearchTableViewController: UIViewController {
         makeConstraints()
         configureTable()
         configureKeyboard()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setupStyle()
+    }
+    
+    private func setupStyle() {
+        textField.textColor = .secondaryLabel
     }
     
     private func configureKeyboard(){

@@ -18,7 +18,7 @@ class BrandSearchViewController: SearchTableViewController {
     private var dataBrand = [BrandFoodCoreData]() {
         didSet {
             let models = dataBrand.map({ brand -> LableCellModel in
-                let model = LableCellModel(font: .systemFont(ofSize: 18, weight: .regular), textColor: .white, numberOfLines: 0, insets: UIEdgeInsets(top: 18, left: 18, bottom: 20, right: 20), type: .text, alignment: .left)
+                let model = LableCellModel(font: .systemFont(ofSize: 18, weight: .regular), textColor: .secondaryLabel, numberOfLines: 0, insets: UIEdgeInsets(top: 18, left: 18, bottom: 20, right: 20), type: .text, alignment: .left)
                 let attrString = NSMutableAttributedString(string: brand.name ?? "", attributes: nil)
                 
                 model.attributedString = attrString

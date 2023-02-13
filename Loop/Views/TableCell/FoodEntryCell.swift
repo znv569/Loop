@@ -20,7 +20,6 @@ class FoodEntryCell: TableCell {
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.textColor = .white
         label.font = .systemFont(ofSize: 16, weight: .regular)
         return label
     }()
@@ -29,7 +28,6 @@ class FoodEntryCell: TableCell {
     private let arrowImageView: UIImageView = {
        let iv = UIImageView()
         iv.image = UIImage(systemName: "chevron.down")
-        iv.tintColor = .white
         iv.contentMode = .scaleAspectFit
         return iv
     }()
@@ -45,7 +43,6 @@ class FoodEntryCell: TableCell {
     private let selectedUnitLabel: UILabel = {
        let label = UILabel()
         label.numberOfLines = 0
-        label.textColor = .white
         label.font = .systemFont(ofSize: 16, weight: .regular)
         return label
     }()
@@ -53,7 +50,6 @@ class FoodEntryCell: TableCell {
     private let countLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 2
-        label.textColor = .white
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.setContentHuggingPriority(.required, for: .horizontal)
         return label
@@ -86,7 +82,6 @@ class FoodEntryCell: TableCell {
         label.numberOfLines = 0
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 15, weight: .regular)
-        label.textColor = .white
         return label
     }()
     
@@ -101,9 +96,7 @@ class FoodEntryCell: TableCell {
        let tf = UITextField()
         tf.delegate = self
         tf.textAlignment = .center
-        tf.textColor = .white
         tf.keyboardType = .decimalPad
-        tf.textColor = .white
         tf.font = .systemFont(ofSize: 18, weight: .semibold)
         tf.addTarget(self, action: #selector(changeValueCount), for: [.valueChanged, .editingChanged])
         return tf
@@ -169,6 +162,20 @@ class FoodEntryCell: TableCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setupStyle()
+    }
+    
+    private func setupStyle() {
+        nameLabel.textColor = .secondaryLabel
+        countLabel.textColor = .secondaryLabel
+        selectedUnitLabel.textColor = .secondaryLabel
+        unitsLabel.textColor = .secondaryLabel
+        countTextField.textColor = .secondaryLabel
+        arrowImageView.tintColor = .secondaryLabel
+        countTextField.textColor = .secondaryLabel
+    }
     
     private func configureUI() {
         contentView.addSubview(mainStackDelete)

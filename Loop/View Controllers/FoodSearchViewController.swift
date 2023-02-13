@@ -17,7 +17,7 @@ class FoodSearchViewController: SearchTableViewController {
     private var dataFood = [FoodCoreData]() {
         didSet {
             let models = dataFood.map({ food -> LableCellModel in
-                let model = LableCellModel(font: .systemFont(ofSize: 18, weight: .regular), textColor: .white, numberOfLines: 0, insets: UIEdgeInsets(top: 18, left: 18, bottom: 20, right: 20), type: .text, alignment: .left)
+                let model = LableCellModel(font: .systemFont(ofSize: 18, weight: .regular), textColor: .secondaryLabel, numberOfLines: 0, insets: UIEdgeInsets(top: 18, left: 18, bottom: 20, right: 20), type: .text, alignment: .left)
                 
                 let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.alignment = NSTextAlignment.left

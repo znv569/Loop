@@ -53,7 +53,7 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     }
     
     private let foodSummaryModel = LableCellModel(font: .systemFont(ofSize: 16, weight: .regular),
-                                          textColor: .white,
+                                                  textColor: .secondaryLabel,
                                           numberOfLines: 0,
                                           insets: UIEdgeInsets(top: 8, left: 10, bottom: 8, right: 10),
                                           alignment: .center )
@@ -450,7 +450,7 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         let minus = originalCarbEntry == nil ? 0 : 1
-        return Sections.numberOfSections(displayWarningSection: shouldDisplayWarning) - minus
+        return Sections.numberOfSections(displayWarningSection: (shouldDisplayAccurateCarbEntryWarning || shouldDisplayOverrideEnabledWarning)) - minus
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -835,7 +835,7 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
         let model = FoodEntryCellModel(food: modelCore, mode: .full)
         foods.forEach({ $0.mode = .short })
         foods.append(model)
-        let section = shouldDisplayAccurateCarbEntryWarning ? Sections.food.rawValue : Sections.food.rawValue - 1
+        let section = (shouldDisplayAccurateCarbEntryWarning || shouldDisplayOverrideEnabledWarning) ? Sections.food.rawValue : Sections.food.rawValue - 1
         let count = foods.count
         let indexPast = IndexPath(row: count - 1, section: section)
         indexes.append(indexPast)
@@ -974,9 +974,9 @@ extension CarbEntryViewController: FoodEntryCellDelegate {
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [weak self] _ in
             guard let index = self?.foods.firstIndex(of: model) as? Int else { return }
             self?.foods.remove(at: index)
-            
-            if let shouldDisplayAccurateCarbEntryWarning = self?.shouldDisplayAccurateCarbEntryWarning {
-                let section = shouldDisplayAccurateCarbEntryWarning ? Sections.food.rawValue : Sections.food.rawValue - 1
+            if let shouldDisplayAccurateCarbEntryWarning = self?.shouldDisplayAccurateCarbEntryWarning,
+               let shouldDisplayOverrideEnabledWarning = self?.shouldDisplayOverrideEnabledWarning {
+                let section = (shouldDisplayAccurateCarbEntryWarning || shouldDisplayOverrideEnabledWarning) ? Sections.food.rawValue : Sections.food.rawValue - 1
                 var indexes: [IndexPath]  = [IndexPath(row: index, section: section)]
                 if self?.foods.count == 0 {
                     indexes.append(IndexPath(row: index + 1, section: section))
@@ -1006,25 +1006,25 @@ extension CarbEntryViewController: FoodEntryCellDelegate {
             cal += food.count * unit.cal
         }
         
-        let attrString = NSMutableAttributedString(string: "Суммарно: \n",
+        let attrString = NSMutableAttributedString(string: "Summary: \n",
                                                    attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue])
-        attrString.append(NSMutableAttributedString(string: "уг: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSMutableAttributedString(string: "carb: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
         attrString.append(NSAttributedString(string: carb.clean + "г,", attributes: nil))
         
-        attrString.append(NSAttributedString(string:  " б: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSAttributedString(string:  " p.: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
         attrString.append(NSAttributedString(string: protein.clean + "г,", attributes: nil))
         
-        attrString.append(NSAttributedString(string:  " ж: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSAttributedString(string:  " f.: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
         attrString.append(NSAttributedString(string: fat.clean + "г,", attributes: nil))
         
-        attrString.append(NSAttributedString(string: " ккал: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
+        attrString.append(NSAttributedString(string: " ccal: ", attributes: [.font: UIFont.systemFont(ofSize: 16, weight: .bold), .foregroundColor: UIColor.systemBlue]))
         attrString.append(NSAttributedString(string: cal.clean , attributes: nil))
         
         foodSummaryModel.attributedString = attrString
         quantity = HKQuantity(unit: preferredCarbUnit, doubleValue: carb)
         
         if carb != 0 {
-            let section = Sections.indexForDetailsSection(displayWarningSection: shouldDisplayAccurateCarbEntryWarning)
+            let section = Sections.indexForDetailsSection(displayWarningSection: (shouldDisplayAccurateCarbEntryWarning || shouldDisplayOverrideEnabledWarning))
             let row = DetailsRow.value.rawValue
             let indexPath = IndexPath(row: row, section: section)
             tableView.reloadRows(at: [indexPath], with: .none)
