@@ -43,34 +43,36 @@ public struct SettingsView: View {
     }
     
     public var body: some View {
-        NavigationView {
-            List {
-                loopSection
-                if versionUpdateViewModel.softwareUpdateAvailable {
-                    softwareUpdateSection
-                }
-                if FeatureFlags.automaticBolusEnabled {
-                    dosingStrategySection
-                }
-                alertManagementSection
-                if viewModel.pumpManagerSettingsViewModel.isSetUp() {
-                    configurationSection
-                }
-                deviceSettingsSection
-                if viewModel.pumpManagerSettingsViewModel.isTestingDevice || viewModel.cgmManagerSettingsViewModel.isTestingDevice {
-                    deleteDataSection
-                }
-                if viewModel.servicesViewModel.showServices {
-                    servicesSection
-                }
-                supportSection
-                
-                if let profileExpiration = Bundle.main.profileExpiration, FeatureFlags.profileExpirationSettingsViewEnabled {
-                    profileExpirationSection(profileExpiration: profileExpiration)
-                }
-                
-                updateProductSection
+        let list = List {
+            loopSection
+            if versionUpdateViewModel.softwareUpdateAvailable {
+                softwareUpdateSection
             }
+            if FeatureFlags.automaticBolusEnabled {
+                dosingStrategySection
+            }
+            alertManagementSection
+            if viewModel.pumpManagerSettingsViewModel.isSetUp() {
+                configurationSection
+            }
+            deviceSettingsSection
+            if viewModel.pumpManagerSettingsViewModel.isTestingDevice || viewModel.cgmManagerSettingsViewModel.isTestingDevice {
+                deleteDataSection
+            }
+            if viewModel.servicesViewModel.showServices {
+                servicesSection
+            }
+            
+            updateProductSection
+            supportSection
+            
+//            if let profileExpiration = Bundle.main.profileExpiration, FeatureFlags.profileExpirationSettingsViewEnabled {
+//                profileExpirationSection(profileExpiration: profileExpiration)
+//            }
+        }
+        
+        return NavigationView {
+            list
             .insetGroupedListStyle()
             .navigationBarTitle(Text(NSLocalizedString("Settings", comment: "Settings screen title")))
             .navigationBarItems(trailing: dismissButton)
@@ -382,7 +384,7 @@ extension SettingsView {
     /*
      DIY loop specific component to show users the amount of time remaining on their build before a rebuild is necessary.
      */
-    private func profileExpirationSection(profileExpiration:Date) -> some View {
+    private func profileExpirationSection(profileExpiration: Date) -> some View {
         let nearExpiration : Bool = ProfileExpirationAlerter.isNearProfileExpiration(profileExpiration: profileExpiration)
         let profileExpirationMsg = ProfileExpirationAlerter.createProfileExpirationSettingsMessage(profileExpiration: profileExpiration)
         let readableExpirationTime = Self.dateFormatter.string(from: profileExpiration)
