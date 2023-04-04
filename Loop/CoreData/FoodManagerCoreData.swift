@@ -8,9 +8,6 @@
 
 import Foundation
 import CoreData
-import FuzzyKit
-import FuzzyLogic
-import FuzzyRelations
 
 extension NSString {
     @objc func countCompare(_ string: String) -> ComparisonResult {
