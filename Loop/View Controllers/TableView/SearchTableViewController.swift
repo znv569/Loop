@@ -17,7 +17,7 @@ class SearchTableViewController: UIViewController {
     
     lazy var textField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Input prodct name"
+        textField.placeholder = "enter the name of the food"
         textField.font = .systemFont(ofSize: 19, weight: .regular)
         textField.addTarget(self, action: #selector(textChange), for: [.editingChanged, .valueChanged])
         return textField

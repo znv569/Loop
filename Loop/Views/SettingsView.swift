@@ -46,6 +46,8 @@ public struct SettingsView: View {
     }
     
     public var body: some View {
+        
+        
         NavigationView {
             List {
                 Group {
@@ -73,7 +75,8 @@ public struct SettingsView: View {
                     ForEach(customSections) { customSectionName in
                         menuItemsForSection(name: customSectionName)
                     }
-
+                    
+                    updateProductSection
                     supportSection
 
                     if let profileExpiration = Bundle.main.profileExpiration, FeatureFlags.profileExpirationSettingsViewEnabled {
@@ -81,66 +84,43 @@ public struct SettingsView: View {
                     }
                 }
             }
-            if FeatureFlags.automaticBolusEnabled {
-                dosingStrategySection
-            }
-            alertManagementSection
-            if viewModel.pumpManagerSettingsViewModel.isSetUp() {
-                configurationSection
-            }
-            deviceSettingsSection
-            if viewModel.pumpManagerSettingsViewModel.isTestingDevice || viewModel.cgmManagerSettingsViewModel.isTestingDevice {
-                deleteDataSection
-            }
-            if viewModel.servicesViewModel.showServices {
-                servicesSection
-            }
-            
-            updateProductSection
-            supportSection
-            
-//            if let profileExpiration = Bundle.main.profileExpiration, FeatureFlags.profileExpirationSettingsViewEnabled {
-//                profileExpirationSection(profileExpiration: profileExpiration)
-//            }
-        }
-        
-        return NavigationView {
-            list
             .insetGroupedListStyle()
             .navigationBarTitle(Text(NSLocalizedString("Settings", comment: "Settings screen title")))
             .navigationBarItems(trailing: dismissButton)
-            .fileImporter(
-                        isPresented: $isImporting,
-                        allowedContentTypes: [.json],
-                        allowsMultipleSelection: false
-                    ) { result in
-                        do {
-                            guard let selectedFile: URL = try result.get().first else { return }
-                            if selectedFile.startAccessingSecurityScopedResource() {
-                                let data = try Data(contentsOf: selectedFile)
-                                defer { selectedFile.stopAccessingSecurityScopedResource() }
-                                
-                                let decoder = JSONDecoder()
-                                do {
-                                    let models = try decoder.decode([FoodProduct].self, from: data)
-                                    FoodManagerCoreData.shared.deleteAllData()
-                                    FoodManagerCoreData.shared.addData(models: models) { progress in
-                                        progressValue = Float(progress)
-                                    }
-                                } catch {
-                                    print(error.localizedDescription)
-                                }
-                            } else {
-                                // Handle denied access
-                            }
-                        } catch {
-                            // Handle failure.
-                            print("Unable to read file contents")
-                            print(error.localizedDescription)
-                        }
-                    }
         }
-        .navigationViewStyle(.stack)
+        .navigationBarTitle(Text(NSLocalizedString("Settings", comment: "Settings screen title")))
+        .navigationBarItems(trailing: dismissButton)
+        .fileImporter(
+                    isPresented: $isImporting,
+                    allowedContentTypes: [.json],
+                    allowsMultipleSelection: false
+                ) { result in
+                    do {
+                        guard let selectedFile: URL = try result.get().first else { return }
+                        if selectedFile.startAccessingSecurityScopedResource() {
+                            let data = try Data(contentsOf: selectedFile)
+                            defer { selectedFile.stopAccessingSecurityScopedResource() }
+                            
+                            let decoder = JSONDecoder()
+                            do {
+                                let models = try decoder.decode([FoodProduct].self, from: data)
+                                FoodManagerCoreData.shared.deleteAllData()
+                                FoodManagerCoreData.shared.addData(models: models) { progress in
+                                    progressValue = Float(progress)
+                                }
+                            } catch {
+                                print(error.localizedDescription)
+                            }
+                        } else {
+                            // Handle denied access
+                        }
+                    } catch {
+                        // Handle failure.
+                        print("Unable to read file contents")
+                        print(error.localizedDescription)
+                    }
+                }
+                .navigationViewStyle(.stack)
     }
 
     private func menuItemsForSection(name: String) -> some View {

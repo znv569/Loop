@@ -60,7 +60,7 @@ final class CarbEntryViewController: LoopChartsTableViewController, Identifiable
     
     private lazy var addFoodModel: ButtonCellModel = {
         let model = ButtonCellModel(font: .systemFont(ofSize: 19, weight: .regular), textColor: .white, backgroundButtonColor: .systemBlue, backgroundContentView: UIColor.cellBackgroundColor, insets: .zero, corner: 6, tintColor: nil, height: 50)
-        model.text = "🥦🍔 Add a product"
+        model.text = "🥦🍔 Add food"
         model.action = { [weak self] in
             self?.addProductController()
         }
