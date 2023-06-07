@@ -37,16 +37,49 @@ public struct SettingsView: View {
     @State private var isImporting: Bool = false
     @State var progressValue: Float = 0.0
 
-    public init(viewModel: SettingsViewModel) {
+    var localizedAppNameAndVersion: String
+
+    public init(viewModel: SettingsViewModel, localizedAppNameAndVersion: String) {
         self.viewModel = viewModel
         self.versionUpdateViewModel = viewModel.versionUpdateViewModel
+        self.localizedAppNameAndVersion = localizedAppNameAndVersion
     }
     
     public var body: some View {
-        let list = List {
-            loopSection
-            if versionUpdateViewModel.softwareUpdateAvailable {
-                softwareUpdateSection
+        NavigationView {
+            List {
+                Group {
+                    loopSection
+                    if versionUpdateViewModel.softwareUpdateAvailable {
+                        softwareUpdateSection
+                    }
+                    if FeatureFlags.automaticBolusEnabled {
+                        dosingStrategySection
+                    }
+                    alertManagementSection
+                    if viewModel.pumpManagerSettingsViewModel.isSetUp() {
+                        configurationSection
+                    }
+                    deviceSettingsSection
+                    if viewModel.pumpManagerSettingsViewModel.isTestingDevice || viewModel.cgmManagerSettingsViewModel.isTestingDevice {
+                        deleteDataSection
+                    }
+                }
+                Group {
+                    if viewModel.servicesViewModel.showServices {
+                        servicesSection
+                    }
+
+                    ForEach(customSections) { customSectionName in
+                        menuItemsForSection(name: customSectionName)
+                    }
+
+                    supportSection
+
+                    if let profileExpiration = Bundle.main.profileExpiration, FeatureFlags.profileExpirationSettingsViewEnabled {
+                        profileExpirationSection(profileExpiration: profileExpiration)
+                    }
+                }
             }
             if FeatureFlags.automaticBolusEnabled {
                 dosingStrategySection
@@ -107,6 +140,25 @@ public struct SettingsView: View {
                         }
                     }
         }
+        .navigationViewStyle(.stack)
+    }
+
+    private func menuItemsForSection(name: String) -> some View {
+        Section(header: SectionHeader(label: name)) {
+            ForEach(pluginMenuItems.filter {$0.section.customLocalizedTitle == name}) { item in
+                item.view
+            }
+        }
+    }
+
+    private var customSections: [String] {
+        pluginMenuItems.compactMap { item in
+            if case .custom(let name) = item.section {
+                return name
+            } else {
+                return nil
+            }
+        }
     }
     
     private var closedLoopToggleState: Binding<Bool> {
@@ -117,11 +169,19 @@ public struct SettingsView: View {
     }
 }
 
-struct ConfigurationMenuItem: Identifiable {
+extension String: Identifiable {
+    public typealias ID = Int
+    public var id: Int {
+        return hash
+    }
+}
+
+struct PluginMenuItem: Identifiable {
     var id: String {
         return pluginIdentifier + String(describing: offset)
     }
 
+    let section: SettingsMenuSection
     let view: AnyView
     let pluginIdentifier: String
     let offset: Int
@@ -136,7 +196,7 @@ extension SettingsView {
     }
     
     private var loopSection: some View {
-        Section(header: SectionHeader(label: viewModel.supportInfoProvider.localizedAppNameAndVersion)) {
+        Section(header: SectionHeader(label: localizedAppNameAndVersion)) {
             Toggle(isOn: closedLoopToggleState) {
                 VStack(alignment: .leading) {
                     Text("Closed Loop", comment: "The title text for the looping enabled switch cell")
@@ -186,6 +246,13 @@ extension SettingsView {
                         Spacer()
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(.critical)
+                    } else if viewModel.alertMuter.configuration.shouldMute {
+                        Spacer()
+                        Image(systemName: "speaker.slash.fill")
+                            .foregroundColor(.white)
+                            .padding(5)
+                            .background(guidanceColors.warning)
+                            .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
                     }
                 }
             }
@@ -215,16 +282,16 @@ extension SettingsView {
                         .environment(\.insulinTintColor, self.insulinTintColor)
             }
             
-            ForEach(configurationMenuItemsForSupportPlugins) { item in
+            ForEach(pluginMenuItems.filter {$0.section == .configuration}) { item in
                 item.view
             }
         }
     }
 
-    private var configurationMenuItemsForSupportPlugins: [ConfigurationMenuItem] {
+    private var pluginMenuItems: [PluginMenuItem] {
         self.viewModel.availableSupports.flatMap { plugin in
-            plugin.configurationMenuItems().enumerated().map { index, view in
-                ConfigurationMenuItem(view: view, pluginIdentifier: plugin.identifier, offset: index)
+            plugin.configurationMenuItems().enumerated().map { index, item in
+                PluginMenuItem(section: item.section, view: item.view, pluginIdentifier: plugin.identifier, offset: index)
             }
         }
     }
@@ -370,12 +437,18 @@ extension SettingsView {
     
     private var supportSection: some View {
         Section(header: SectionHeader(label: NSLocalizedString("Support", comment: "The title of the support section in settings"))) {
-            NavigationLink(destination: SupportScreenView(didTapIssueReport: viewModel.didTapIssueReport,
-                                                          criticalEventLogExportViewModel: viewModel.criticalEventLogExportViewModel,
-                                                          availableSupports: self.viewModel.availableSupports,
-                                                          supportInfoProvider: self.viewModel.supportInfoProvider))
-            {
-                Text(NSLocalizedString("Support", comment: "The title of the support item in settings"))
+            Button(action: {
+                self.viewModel.didTapIssueReport()
+            }) {
+                Text("Issue Report", comment: "The title text for the issue report menu item")
+            }
+
+            ForEach(pluginMenuItems.filter( { $0.section == .support })) {
+                $0.view
+            }
+
+            NavigationLink(destination: CriticalEventLogExportView(viewModel: viewModel.criticalEventLogExportViewModel)) {
+                Text(NSLocalizedString("Export Critical Event Logs", comment: "The title of the export critical event logs in support"))
             }
         }
     }
@@ -499,13 +572,13 @@ public struct SettingsView_Previews: PreviewProvider {
         let displayGlucoseUnitObservable = DisplayGlucoseUnitObservable(displayGlucoseUnit: .milligramsPerDeciliter)
         let viewModel = SettingsViewModel.preview
         return Group {
-            SettingsView(viewModel: viewModel)
+            SettingsView(viewModel: viewModel, localizedAppNameAndVersion: "Loop Demo V1")
                 .colorScheme(.light)
                 .previewDevice(PreviewDevice(rawValue: "iPhone SE 2"))
                 .previewDisplayName("SE light")
                 .environmentObject(displayGlucoseUnitObservable)
             
-            SettingsView(viewModel: viewModel)
+            SettingsView(viewModel: viewModel, localizedAppNameAndVersion: "Loop Demo V1")
                 .colorScheme(.dark)
                 .previewDevice(PreviewDevice(rawValue: "iPhone 11 Pro Max"))
                 .previewDisplayName("11 Pro dark")

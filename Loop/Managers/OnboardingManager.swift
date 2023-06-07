@@ -17,6 +17,7 @@ class OnboardingManager {
     private let deviceDataManager: DeviceDataManager
     private let servicesManager: ServicesManager
     private let loopDataManager: LoopDataManager
+    private let supportManager: SupportManager
     private weak var windowProvider: WindowProvider?
     private let userDefaults: UserDefaults
 
@@ -38,12 +39,13 @@ class OnboardingManager {
 
     private var onboardingCompletion: (() -> Void)?
 
-    init(pluginManager: PluginManager, bluetoothProvider: BluetoothProvider, deviceDataManager: DeviceDataManager, servicesManager: ServicesManager, loopDataManager: LoopDataManager, windowProvider: WindowProvider?, userDefaults: UserDefaults = .standard) {
+    init(pluginManager: PluginManager, bluetoothProvider: BluetoothProvider, deviceDataManager: DeviceDataManager, servicesManager: ServicesManager, loopDataManager: LoopDataManager, supportManager: SupportManager, windowProvider: WindowProvider?, userDefaults: UserDefaults = .standard) {
         self.pluginManager = pluginManager
         self.bluetoothProvider = bluetoothProvider
         self.deviceDataManager = deviceDataManager
         self.servicesManager = servicesManager
         self.loopDataManager = loopDataManager
+        self.supportManager = supportManager
         self.windowProvider = windowProvider
         self.userDefaults = userDefaults
 
@@ -340,9 +342,9 @@ extension OnboardingManager: CGMManagerProvider {
         return cgmManagerType.onboardingImage
     }
 
-    func onboardCGMManager(withIdentifier identifier: String) -> Swift.Result<OnboardingResult<CGMManagerViewController, CGMManager>, Error> {
+    func onboardCGMManager(withIdentifier identifier: String, prefersToSkipUserInteraction: Bool) -> Swift.Result<OnboardingResult<CGMManagerViewController, CGMManager>, Error> {
         guard let cgmManager = deviceDataManager.cgmManager else {
-            return deviceDataManager.setupCGMManager(withIdentifier: identifier)
+            return deviceDataManager.setupCGMManager(withIdentifier: identifier, prefersToSkipUserInteraction: prefersToSkipUserInteraction)
         }
         guard cgmManager.managerIdentifier == identifier else {
             return .failure(OnboardingError.invalidState)
@@ -384,9 +386,9 @@ extension OnboardingManager: PumpManagerProvider {
                                        maximumBasalScheduleEntryCount: pumpManagerType.onboardingMaximumBasalScheduleEntryCount)
     }
 
-    func onboardPumpManager(withIdentifier identifier: String, initialSettings settings: PumpManagerSetupSettings) -> Swift.Result<OnboardingResult<PumpManagerViewController, PumpManager>, Error> {
+    func onboardPumpManager(withIdentifier identifier: String, initialSettings settings: PumpManagerSetupSettings, prefersToSkipUserInteraction: Bool) -> Swift.Result<OnboardingResult<PumpManagerViewController, PumpManager>, Error> {
         guard let pumpManager = deviceDataManager.pumpManager else {
-            return deviceDataManager.setupPumpManager(withIdentifier: identifier, initialSettings: settings)
+            return deviceDataManager.setupPumpManager(withIdentifier: identifier, initialSettings: settings, prefersToSkipUserInteraction: prefersToSkipUserInteraction)
         }
         guard pumpManager.managerIdentifier == identifier else {
             return .failure(OnboardingError.invalidState)
@@ -435,6 +437,12 @@ extension OnboardingManager: TherapySettingsProvider {
 
 extension OnboardingManager: OnboardingProvider {
     var allowDebugFeatures: Bool { FeatureFlags.allowDebugFeatures }   // NOTE: DEBUG FEATURES - DEBUG AND TEST ONLY
+}
+
+// MARK: - SupportProvider
+
+extension OnboardingManager: SupportProvider {
+    var availableSupports: [SupportUI] { supportManager.availableSupports }
 }
 
 // MARK: - OnboardingUI

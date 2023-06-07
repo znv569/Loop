@@ -181,7 +181,7 @@ public final class AlertManager {
 
         for (minutes, isCritical) in [(20.0, false), (40.0, false), (60.0, true), (120.0, true)] {
             let warningInterval = TimeInterval(minutes: minutes)
-            let timeUntilNotification = lastLoopDate.addingTimeInterval(.minutes(minutes)).timeIntervalSinceNow
+            let timeUntilNotification = lastLoopDate.addingTimeInterval(warningInterval).timeIntervalSinceNow
             guard timeUntilNotification >= 0 else { break }
 
             let formatter = DateComponentsFormatter()
@@ -227,7 +227,6 @@ public final class AlertManager {
                     alertAt: nextTriggerDate,
                     title: notificationContent.title,
                     body: notificationContent.body,
-                    timeInterval: warningInterval,
                     isCritical: isCritical)
                 scheduledNotifications.append(scheduledNotification)
             }
@@ -781,6 +780,29 @@ extension AlertManager: AlertPermissionsCheckerDelegate {
         alertPresenter.dismissAlert(alertController, animated: true) { [weak self] in
             self?.unsafeNotificationPermissionsAlertController = nil
         }
+    }
+}
+
+extension AlertManager {
+    func presentLoopResetConfirmationAlert(confirmAction: @escaping (@escaping () -> Void) -> Void, cancelAction: @escaping () -> Void) {
+        let alert = UIAlertController(title: "Loop Reset Requested", message: "We've detected a Loop reset may be needed. Tapping confirm will reset Loop and quit the app.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { _ in
+            confirmAction() {
+                fatalError("DEBUG: Resetting Loop")
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+            cancelAction()
+        }))
+        
+        alertPresenter.present(alert, animated: true)
+    }
+    
+    func presentCouldNotResetLoopAlert(error: Error) {
+        let alert = UIAlertController(title: "Could Not Restart Loop", message: "While trying to restart Loop an error occured.\n\n\(error.localizedDescription)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        alertPresenter.present(alert, animated: true)
     }
 }
 
